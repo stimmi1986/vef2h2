@@ -21,9 +21,9 @@ const Layout: React.FC = ({ children }) => {
       {/* Footer */}
       <footer className="flex justify-between items-center px-4 py-2 bg-gray-800 text-white">
         <div>
-          <Link href="/Register"><button className="mr-2">Sign up</button></Link>
-          <Link href="/"><button className="mr-2">Sign In</button></Link>
-          <Link href="/"><button className="mr-2">Sign Out</button></Link>
+          <Link href="/signup"><button className="mr-2">Sign up</button></Link>
+          <Link href="/login"><button className="mr-2">Login</button></Link>
+          <Link href="/logout"><button className="mr-2">Sign Out</button></Link>
         </div>
       </footer>
     </div>
