@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-const SignOut = () => {
+const LogOut = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignOut = async () => {
+  const handleLogOut = async () => {
     setIsLoading(true);
-    const response = await fetch('http://localhost:4000/signup', {
+    const response = await fetch('http://localhost:4000/logout', {
       method: 'POST',
       credentials: 'include',
     });
@@ -15,11 +15,11 @@ const SignOut = () => {
 
   return (
     <div>
-      <button onClick={handleSignOut} disabled={isLoading}>
+      <button onClick={handleLogOut} disabled={isLoading}>
         Sign Out
       </button>
     </div>
   );
 };
 
-export default SignOut;
+export default LogOut;

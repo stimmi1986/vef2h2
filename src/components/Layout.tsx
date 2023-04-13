@@ -1,6 +1,19 @@
 import Link from 'next/link';
 
 const Layout: React.FC = ({ children }) => {
+
+  const handleLogout = async () => {
+    const response = await fetch('http://localhost:4000/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+    });
+    if (response.ok) {
+      console.log(response)
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
@@ -14,16 +27,16 @@ const Layout: React.FC = ({ children }) => {
       {/* Main */}
       <main className="flex-grow px-4 py-2">
         <div className="flex items-center">
-        {children}
+          {children}
         </div>
       </main>
 
       {/* Footer */}
       <footer className="flex justify-between items-center px-4 py-2 bg-gray-800 text-white">
         <div>
-          <Link href="/signup"><button className="mr-2">Sign up</button></Link>
-          <Link href="/login"><button className="mr-2">Login</button></Link>
-          <Link href="/logout"><button className="mr-2">Sign Out</button></Link>
+          <Link href="/signup"><button className="mr-10">Sign up</button></Link>
+          <Link href="/login"><button className="mr-10">Login</button></Link>
+          <button onClick={handleLogout}>Sign Out</button>
         </div>
       </footer>
     </div>
@@ -31,27 +44,3 @@ const Layout: React.FC = ({ children }) => {
 };
 
 export default Layout;
-
-
-
-
-
-/*
-export function Layout({ title, children, footer }) {
-  return (
-    <>
-      <header>
-        <h1>{title}</h1>
-      </header>
-      <main>
-        {children}
-      </main>
-      <footer>
-        {footer}
-      </footer>
-    </>
-  )
-}
-
-export default Layout;
-*/
