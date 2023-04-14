@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export const BaseUrl = process.env.NEXT_PUBLIC_API_URL;
+export const BaseUrl = process.env.APP_ENV;
 
 const Layout: React.FC = ({ children }) => {
 
