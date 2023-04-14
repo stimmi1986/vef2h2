@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export const BaseUrl = process.env.APP_ENV;
+export const BaseUrl = process.env.DB_HOST;
 
 const Layout: React.FC = ({ children }) => {
 
