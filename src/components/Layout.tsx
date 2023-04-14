@@ -4,7 +4,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export const BaseUrl = process.env.DB_HOST;
+export const BaseUrl = process.env.BASE_URL;
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
 
