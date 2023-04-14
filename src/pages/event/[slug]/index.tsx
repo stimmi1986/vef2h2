@@ -1,7 +1,13 @@
 import { BaseUrl } from "$/components/Layout";
 import { useRouter } from "next/router";
 
-function Event({ event }) {
+interface Event {
+  name: string;
+  description: string;
+  // any other properties
+}
+
+function Event({ event }: { event: Event }) {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -16,7 +22,13 @@ function Event({ event }) {
   );
 }
 
-export async function getServerSideProps(context) {
+interface Context {
+  query: {
+    slug: string;
+  };
+}
+
+export async function getServerSideProps(context: Context) {
   const { slug } = context.query;
   console.log(context.query)
 

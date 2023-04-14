@@ -1,8 +1,12 @@
 import Link from 'next/link';
 
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
 export const BaseUrl = process.env.DB_HOST;
 
-const Layout: React.FC = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {

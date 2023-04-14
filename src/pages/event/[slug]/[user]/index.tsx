@@ -2,10 +2,18 @@ import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
-function Event({ event }) {
+type EventProps = {
+  event: {
+    name: string,
+    description: string,
+    slug: string,
+  },
+};
+
+function Event({ event }: EventProps) {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('loggedIn');
@@ -46,7 +54,7 @@ function Event({ event }) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: any) {
   const { slug } = context.query;
   console.log(context.query)
 

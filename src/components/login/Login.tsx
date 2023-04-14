@@ -1,11 +1,19 @@
+import Link from 'next/link';
 import PropTypes from 'prop-types';
+
+interface LoginProps {
+  loggedin?: boolean;
+  name?: string;
+  onRegister?: () => void;
+  onLogout?: () => void;
+}
 
 export function Login({
   loggedin = false,
   name,
   onRegister,
   onLogout,
-}) {
+}: LoginProps) {
   if (loggedin) {
     return (
       <>
@@ -20,7 +28,7 @@ export function Login({
   return (
     <>
       <p>
-        <a href="/login">Innskráning</a>
+        <Link href="/login">Innskráning</Link>
       </p>
       <p>
         <button onClick={onRegister}>Nýskráning</button>
