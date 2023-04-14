@@ -1,9 +1,11 @@
 import Link from 'next/link';
 
+export const BaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const Layout: React.FC = ({ children }) => {
 
   const handleLogout = async () => {
-    const response = await fetch('http://localhost:4000/logout', {
+    const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'

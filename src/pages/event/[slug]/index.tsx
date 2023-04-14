@@ -1,5 +1,4 @@
-import { Button } from "$/components/form/Button";
-import { Input } from "$/components/form/Input";
+import { BaseUrl } from "$/components/Layout";
 import { useRouter } from "next/router";
 
 function Event({ event }) {
@@ -21,7 +20,7 @@ export async function getServerSideProps(context) {
   const { slug } = context.query;
   console.log(context.query)
 
-  const res = await fetch(`http://localhost:4000/event/${slug}`);
+  const res = await fetch(`${BaseUrl}/event/${slug}`);
   const event = await res.json();
 
   return {

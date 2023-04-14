@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import cookie from 'js-cookie';
+import { BaseUrl } from '$/components/Layout';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -10,27 +11,31 @@ const Login = () => {
   useEffect(() => {
     const token = cookie.get('token');
     if (token) {
-      // If a token exists in the cookie, send it to the server to check if it's valid
-      fetch('http://localhost:4000/check-token', {
+      fetch(`${BaseUrl}/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ token })
       })
-        .then(response => {
-          if (response.ok) {
-            setLoggedIn(true);
-            setIsAdmin(response.isAdmin);
-            setUsername(response.username);
-          } else {
-            cookie.remove('token');
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Token validation failed');
+        }
+      })
+      .then(data => {
+        setLoggedIn(true);
+        setIsAdmin(data.isAdmin);
+        setUsername(data.username);
+      })
+      .catch(error => {
+        console.log(error);
+        cookie.remove('token');
+      });
     }
+    console.log('Token: ',token)
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,12 +53,14 @@ const Login = () => {
       setLoggedIn(true);
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
-      cookie.set('token', data.access_token, { expires: data.expiresIn / 86400 });
+      if (data.access_token) {
+        cookie.set('token', data.access_token, { expires: data.expiresIn / 86400 });
+      }
     }
   };
 
+
   let message;
-  console.log('Mess:', message)
   if (!loggedIn) {
     message = <div>You are not logged in.</div>;
   } else if (isAdmin) {
@@ -63,17 +70,40 @@ const Login = () => {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
-        <label>
-          Password:
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        <button type="submit">Log In</button>
+    <div className="max-w-xs mx-auto">
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="username">
+            Username:
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+        <div className="mb-6">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="password">
+            Password:
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Log In
+          </button>
+        </div>
       </form>
       {message}
     </div>
