@@ -1,6 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-}
+const { parsed: localEnv } = require('dotenv').config()
 
-module.exports = nextConfig
+module.exports = {
+  reactStrictMode: true,
+  env: {
+    DB_HOST: localEnv.DB_HOST
+  }
+}
