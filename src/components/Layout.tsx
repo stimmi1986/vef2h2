@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../pages/auth';
 import { useRouter } from 'next/router';
 
@@ -13,12 +13,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const router = useRouter();
+  const { token } = useContext(AuthContext);
 
   const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8',
+        Authorization: `Bearer ${token}`,
       },
     });
     if (response.ok) {
@@ -30,10 +32,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch(`${BaseUrl}/:user`); //veit ekki alveg hvað ég á að nota her
-        const data = await response.json();
-        setLoggedIn(data.loggedIn);
-        setIsAdmin(data.isAdmin);
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+          const response = await fetch(`${BaseUrl}`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          const data = await response.json();
+          setLoggedIn(true);
+          setIsAdmin(data.isAdmin);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -53,9 +62,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Main */}
       <main className="flex-grow px-4 py-2">
-        <div className="flex items-center">
-          {children}
-        </div>
+        <div className="flex items-center">{children}</div>
       </main>
 
       {/* Footer */}
@@ -69,13 +76,16 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <button onClick={handleLogout}>Sign Out</button>
           ) : (
             <>
-              <Link href="/signup"><button className="mr-4">Register</button></Link>
-              <Link href="/login"><button className="mr-4">Login</button></Link>
+              <Link href="/signup">
+                <button className="mr-4">Register</button>
+              </Link>
+              <Link href="/login">
+                <button className="mr-4">Login</button>
+              </Link>
             </>
           )}
         </div>
       </footer>
-
     </div>
   );
 };
