@@ -41,8 +41,8 @@ export const Login = () => {
       setLoggedIn(true);
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
+      if (data.access_Token) {
+        localStorage.setItem('token', data.access_Token);
       }
       router.push('/');
     }
