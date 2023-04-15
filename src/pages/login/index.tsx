@@ -27,7 +27,7 @@ export const Login = () => {
     }
   }, []);
 
-  const handleSubmit = async (e: Reacct.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const response = await fetch(`${BaseUrl}/login`, {
       method: 'POST',
