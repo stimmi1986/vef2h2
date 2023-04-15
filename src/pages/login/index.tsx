@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
 
+const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
