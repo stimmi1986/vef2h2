@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
 
+const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -26,7 +27,7 @@ export const Login = () => {
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: Reacct.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const response = await fetch(`${BaseUrl}/login`, {
       method: 'POST',
@@ -41,8 +42,9 @@ export const Login = () => {
       setLoggedIn(true);
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
+      if (data.access_Token) {
+        localStorage.setItem('token', data.access_Token);
+        alert(localStorage.getItem('token'))
       }
       router.push('/');
     }
