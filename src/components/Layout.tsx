@@ -23,16 +23,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     });
     if (response.ok) {
       console.log(response);
-      // redirect to home page after successful logout
       router.push('/');
     }
   };
 
   useEffect(() => {
-    // check if user is authenticated and set loggedIn and isAdmin props accordingly
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch(`${BaseUrl}/api/auth/status`);
+        const response = await fetch(`${BaseUrl}/:user`); //veit ekki alveg hvað ég á að nota her
         const data = await response.json();
         setLoggedIn(data.loggedIn);
         setIsAdmin(data.isAdmin);
