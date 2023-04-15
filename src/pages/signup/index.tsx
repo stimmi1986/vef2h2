@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { BaseUrl } from '$/components/Layout';
 
-
 const Signup = () => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -20,7 +19,7 @@ const Signup = () => {
     });
     const data = await response.json();
     console.log(data);
-    if (response.status === 200) {
+    if (response.status === 201) { // mætti laga væri hægt að hafa 199 < x <300
       router.push('/login');
     }
   };

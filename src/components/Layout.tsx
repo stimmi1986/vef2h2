@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { AuthContext } from '../pages/auth';
+import { useRouter } from 'next/router';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -6,7 +9,10 @@ interface LayoutProps {
 
 export const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {
@@ -16,9 +22,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       },
     });
     if (response.ok) {
-      console.log(response)
+      console.log(response);
+      // redirect to home page after successful logout
+      router.push('/');
     }
   };
+
+  useEffect(() => {
+    // check if user is authenticated and set loggedIn and isAdmin props accordingly
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch(`${BaseUrl}/api/auth/status`);
+        const data = await response.json();
+        setLoggedIn(data.loggedIn);
+        setIsAdmin(data.isAdmin);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    checkAuthStatus();
+  }, []);
 
   return (
     <div className="flex flex-col h-screen">
@@ -39,12 +62,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Footer */}
       <footer className="flex justify-between items-center px-4 py-2 bg-gray-800 text-white">
-        <div>
-          <Link href="/signup"><button className="mr-10">Sign up</button></Link>
-          <Link href="/login"><button className="mr-10">Login</button></Link>
-          <button onClick={handleLogout}>Sign Out</button>
+        <div className="flex items-center">
+          <span className="mr-4">LoggedIn: {loggedIn ? 'Yes' : 'No'}</span>
+          <span className="mr-4">isAdmin: {isAdmin ? 'Yes' : 'No'}</span>
+        </div>
+        <div className="flex items-center">
+          {loggedIn ? (
+            <button onClick={handleLogout}>Sign Out</button>
+          ) : (
+            <>
+              <Link href="/signup"><button className="mr-4">Register</button></Link>
+              <Link href="/login"><button className="mr-4">Login</button></Link>
+            </>
+          )}
         </div>
       </footer>
+
     </div>
   );
 };

@@ -1,41 +1,29 @@
 import { useState, useEffect } from 'react';
-import cookie from 'js-cookie';
+import jwt from "jsonwebtoken";
 import { BaseUrl } from '$/components/Layout';
+import { useRouter } from 'next/router';
 
-const Login = () => {
+export const Login = () => {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const token = cookie.get('token');
+    const token = localStorage.getItem('token');
     if (token) {
-      fetch(`${BaseUrl}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
+      jwt.verify(token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
+        if (err) {
+          console.log(err);
+          localStorage.removeItem('token');
         } else {
-          throw new Error('Token validation failed');
+          setLoggedIn(true);
+          setIsAdmin(decoded.isAdmin);
+          setUsername(decoded.username);
         }
-      })
-      .then(data => {
-        setLoggedIn(true);
-        setIsAdmin(data.isAdmin);
-        setUsername(data.username);
-      })
-      .catch(error => {
-        console.log(error);
-        cookie.remove('token');
       });
     }
-    console.log('Token: ',token)
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,11 +42,11 @@ const Login = () => {
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
       if (data.access_token) {
-        cookie.set('token', data.access_token, { expires: data.expiresIn / 86400 });
+        localStorage.setItem('token', data.access_token);
       }
+      router.push('/');
     }
   };
-
 
   let message;
   if (!loggedIn) {
