@@ -32,21 +32,26 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-          const response = await fetch(`${BaseUrl}`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
-          const data = await response.json();
-          setLoggedIn(true);
-          setIsAdmin(data.isAdmin);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoggedIn(false);
+          setIsAdmin(false);
+          return;
         }
+
+        const response = await fetch(`${BaseUrl}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setLoggedIn(data.loggedIn);
+        setIsAdmin(data.isAdmin);
       } catch (error) {
         console.error(error);
       }
     };
+
     checkAuthStatus();
   }, []);
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import jwt from 'jsonwebtoken';
 import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
-import error from 'next/error';
 
 
 export const Login = () => {
@@ -30,55 +29,25 @@ export const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${BaseUrl}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await response.json();
-      console.log(data);
-      if (response.ok) {
-        setLoggedIn(true);
-        setUsername(data.username);
-        setIsAdmin(data.isAdmin);
-        if (data.access_Token) {
-          localStorage.setItem('token', data.access_Token);
-          jwt.verify(data.access_Token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
-            if (err) {
-              console.log(err);
-              localStorage.removeItem('token');
-            } else {
-              setLoggedIn(true);
-              setIsAdmin(decoded.isAdmin);
-              setUsername(decoded.username);
-            }
-          });
-        }
-        router.push('/');
-      } else {
-        router.push('/login');
-        return;
+    const response = await fetch(`${BaseUrl}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await response.json();
+    console.log(data);
+    if (response.ok) {
+      setLoggedIn(true);
+      setUsername(data.username);
+      setIsAdmin(data.isAdmin);
+      if (data.access_Token) {
+        localStorage.setItem('token', data.access_Token);
       }
-    } catch (error) {
-      console.log(error);
-      router.push('/login');
-      return;
-
+      router.push('/');
     }
   };
-
-
-  let message;
-  if (!loggedIn) {
-    message = <div>You are not logged in.</div>;
-  } else if (isAdmin) {
-    message = <div>You are an admin.</div>;
-  } else {
-    message = <div>You are not an admin, but you are awesome!</div>;
-  }
 
   return (
     <div className="max-w-xs mx-auto">
@@ -116,7 +85,6 @@ export const Login = () => {
           </button>
         </div>
       </form>
-      {message}
     </div>
   );
 };
