@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import jwt from "jsonwebtoken";
 import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
-<<<<<<< HEAD
-
-=======
->>>>>>> f909b111869ccb05aad5254f1b84c284a773ba55
 
 const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const Login = () => {
@@ -42,7 +38,7 @@ export const Login = () => {
       }catch(err){
         console.log(err);
       }
-    } 
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,15 +50,9 @@ export const Login = () => {
       },
       body: JSON.stringify({ username, password })
     });
-<<<<<<< HEAD
-    const data = await response.json();
-    console.log(data);
-    if (response.ok) {
-=======
     console.log("submit");
     if (response.ok) {
       const data = await response.json();
->>>>>>> f909b111869ccb05aad5254f1b84c284a773ba55
       setLoggedIn(true);
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
@@ -73,8 +63,6 @@ export const Login = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
   let message;
   if (!loggedIn) {
     message = <div>You are not logged in.</div>;
@@ -84,7 +72,6 @@ export const Login = () => {
     message = <div>You are not an admin, but you are awesome!</div>;
   }
 
->>>>>>> f909b111869ccb05aad5254f1b84c284a773ba55
   return (
     <div className="max-w-xs mx-auto">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -121,6 +108,7 @@ export const Login = () => {
           </button>
         </div>
       </form>
+      {message}
     </div>
   );
 };

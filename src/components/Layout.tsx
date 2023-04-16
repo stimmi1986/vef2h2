@@ -13,7 +13,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const router = useRouter();
-  const { token } = useContext(AuthContext)
+  const { token } = useContext(AuthContext);
+
 
   const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {
@@ -23,8 +24,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (response.ok) {
-      console.log(response);
+    if (response.status === 200) {
+      localStorage.removeItem('token');
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      setLoggedIn(false);
+      setIsAdmin(false);
       router.push('/');
     }
   };
