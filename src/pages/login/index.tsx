@@ -15,14 +15,15 @@ export const Login = () => {
     const token = localStorage.getItem('token');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       try{
-        const dec = jwt.decode(token,{complete:true});
+        const dec = jwt.decode(token);
         if(dec){
-          console.log(dec.payload);
+          console.log(dec);
+          const pay = dec
           setLoggedIn(true);
-          setIsAdmin(dec.payload.admin);
-          setUsername(dec.payload.username);
+          setIsAdmin(dec['admin']?false:true);
+          setUsername(dec['username']);
         }
-        jwt.verify(token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
+        /*jwt.verify(token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
           if (err) {
             console.log(err);
             alert(err)
@@ -33,7 +34,7 @@ export const Login = () => {
             //setIsAdmin(decoded.isAdmin);
             //setUsername(decoded.username);
           }
-        });
+        });*/
       }catch(err){
         console.log(err);
       }
