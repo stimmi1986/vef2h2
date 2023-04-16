@@ -1,20 +1,20 @@
 import Link from 'next/link';
-import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../pages/auth';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import jwt from 'jsonwebtoken';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+export const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const router = useRouter();
-  const { token } = useContext(AuthContext);
-
+  const [loggedIn, setLoggedIn] = useState(typeof localStorage !== 'undefined' && Boolean(localStorage.getItem('token')));
+  const [isAdmin, setIsAdmin] = useState(false);
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {
@@ -28,30 +28,20 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       localStorage.removeItem('token');
       document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
       setLoggedIn(false);
-      setIsAdmin(false);
       router.push('/');
     }
   };
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-          const response = await fetch(`${BaseUrl}`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
-          const data = await response.json();
-          setLoggedIn(true);
-          setIsAdmin(data.isAdmin);
-        }
-      } catch (error) {
-        console.error(error);
+    const token = localStorage.getItem('token');
+    if (token && NEXT_PUBLIC_JWT_SECRET) {
+      const dec = jwt.decode(token);
+      if (dec) {
+        console.log(dec);
+        setLoggedIn(true);
+        setIsAdmin(dec.admin);
       }
-    };
-    checkAuthStatus();
+    }
   }, []);
 
   return (
@@ -60,7 +50,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="flex justify-between items-center px-4 py-2 bg-gray-800 text-white">
         <h1 className="text-lg font-bold">Viðburðasíða fyrir Vefforritun 2</h1>
         <Link href="/">
-          <div className="text-blue-400 hover:text-blue-300">Skoða Viðburði</div>
+          <button className="text-blue-400 hover:text-blue-300">Skoða Viðburði</button>
         </Link>
       </header>
 
@@ -93,5 +83,4 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     </div>
   );
 };
-
 export default Layout;

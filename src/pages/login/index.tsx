@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import jwt from "jsonwebtoken";
-import { BaseUrl } from '$/components/Layout';
+import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '$/components/Layout';
 import { useRouter } from 'next/router';
 
-const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -14,29 +13,11 @@ export const Login = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
-      try{
-        const dec = jwt.decode(token);
-        if(dec){
-          console.log(dec);
-          const pay = dec
-          setLoggedIn(true);
-          setIsAdmin(dec['admin']?false:true);
-          setUsername(dec['username']);
-        }
-        /*jwt.verify(token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
-          if (err) {
-            console.log(err);
-            alert(err)
-            localStorage.removeItem('token');
-          } else {
-            setLoggedIn(true);
-            console.log(decoded);
-            //setIsAdmin(decoded.isAdmin);
-            //setUsername(decoded.username);
-          }
-        });*/
-      }catch(err){
-        console.log(err);
+      const dec: any = jwt.decode(token);
+      if (dec) {
+        console.log(dec);
+        setLoggedIn(true);
+        setIsAdmin(!!dec.admin);
       }
     }
   }, []);
@@ -62,15 +43,6 @@ export const Login = () => {
       router.push('/');
     }
   };
-
-  let message;
-  if (!loggedIn) {
-    message = <div>You are not logged in.</div>;
-  } else if (isAdmin) {
-    message = <div>You are an admin.</div>;
-  } else {
-    message = <div>You are not an admin, but you are awesome!</div>;
-  }
 
   return (
     <div className="max-w-xs mx-auto">
@@ -108,7 +80,6 @@ export const Login = () => {
           </button>
         </div>
       </form>
-      {message}
     </div>
   );
 };

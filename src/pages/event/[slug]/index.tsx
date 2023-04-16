@@ -1,12 +1,16 @@
 import { BaseUrl } from "$/components/Layout";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../auth";
+import { useVerify } from '$/components/Verify';
 
+const MyComponent = () => {
+  const { loggedIn, isAdmin } = useVerify();
+};
 interface Event {
   id: number;
   name: string;
   description: string;
-  // any other properties
 }
 
 function Event({ event }: { event: Event }) {
@@ -53,13 +57,13 @@ function Event({ event }: { event: Event }) {
   }
 
   return (
-    <div>
-      <h1>{event.name}</h1>
-      <p>{event.description}</p>
-      {('loggedIn' || 'isAdmin') && (
-        <form onSubmit={handleSubmit}>
+    <div className="flex flex-col items-center">
+      <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
+      <p className="text-lg mb-6">{event.description}</p>
+      {('loggedIn' || 'admin') && (
+        <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 font-bold">
+            <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
               Name
             </label>
             <input
@@ -73,7 +77,7 @@ function Event({ event }: { event: Event }) {
           <div className="mb-4">
             <label
               htmlFor="description"
-              className="block text-gray-700 font-bold"
+              className="block text-gray-700 font-bold mb-2"
             >
               Description
             </label>
@@ -89,7 +93,7 @@ function Event({ event }: { event: Event }) {
             disabled={isSubmitting}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Sign Up
+            Save Changes
           </button>
         </form>
       )}
