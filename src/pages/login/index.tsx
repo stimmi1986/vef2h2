@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
-import error from 'next/error';
 
-
+const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -14,62 +13,54 @@ export const Login = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      jwt.verify(token, '', (err, decoded) => {
-        if (err) {
-          console.log(err);
-          localStorage.removeItem('token');
-        } else {
+    if (token && NEXT_PUBLIC_JWT_SECRET) {
+      try{
+        const dec = jwt.decode(token,{complete:true});
+        if(dec){
+          console.log(dec.payload);
           setLoggedIn(true);
-          setIsAdmin(decoded.isAdmin);
-          setUsername(decoded.username);
+          setIsAdmin(dec.payload.admin);
+          setUsername(dec.payload.username);
         }
-      });
-    }
+        jwt.verify(token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
+          if (err) {
+            console.log(err);
+            alert(err)
+            localStorage.removeItem('token');
+          } else {
+            setLoggedIn(true);
+            console.log(decoded);
+            //setIsAdmin(decoded.isAdmin);
+            //setUsername(decoded.username);
+          }
+        });
+      }catch(err){
+        console.log(err);
+      }
+    } 
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${BaseUrl}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      });
+    const response = await fetch(`${BaseUrl}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    });
+    console.log("submit");
+    if (response.ok) {
       const data = await response.json();
-      console.log(data);
-      if (response.ok) {
-        setLoggedIn(true);
-        setUsername(data.username);
-        setIsAdmin(data.isAdmin);
-        if (data.access_Token) {
-          localStorage.setItem('token', data.access_Token);
-          jwt.verify(data.access_Token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
-            if (err) {
-              console.log(err);
-              localStorage.removeItem('token');
-            } else {
-              setLoggedIn(true);
-              setIsAdmin(decoded.isAdmin);
-              setUsername(decoded.username);
-            }
-          });
-        }
-        router.push('/');
-      } else {
-        router.push('/login');
-        return;
+      setLoggedIn(true);
+      setUsername(data.username);
+      setIsAdmin(data.isAdmin);
+      if (data.access_Token) {
+        localStorage.setItem('token', data.access_Token);
       }
-    } catch (error) {
-      console.log(error);
-      router.push('/login');
-      return;
-
+      router.push('/');
     }
   };
-
 
   let message;
   if (!loggedIn) {
