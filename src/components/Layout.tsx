@@ -13,7 +13,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const router = useRouter();
-  const { token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext)
 
   const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {
@@ -32,26 +32,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setLoggedIn(false);
-          setIsAdmin(false);
-          return;
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+          const response = await fetch(`${BaseUrl}`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          const data = await response.json();
+          setLoggedIn(true);
+          setIsAdmin(data.isAdmin);
         }
-
-        const response = await fetch(`${BaseUrl}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setLoggedIn(data.loggedIn);
-        setIsAdmin(data.isAdmin);
       } catch (error) {
         console.error(error);
       }
     };
-
     checkAuthStatus();
   }, []);
 

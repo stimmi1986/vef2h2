@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { BaseUrl } from '$/components/Layout';
 import { useRouter } from 'next/router';
+<<<<<<< HEAD
 
+=======
+>>>>>>> f909b111869ccb05aad5254f1b84c284a773ba55
 
+const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -13,18 +17,32 @@ export const Login = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      jwt.verify(token, '', (err, decoded) => {
-        if (err) {
-          console.log(err);
-          localStorage.removeItem('token');
-        } else {
+    if (token && NEXT_PUBLIC_JWT_SECRET) {
+      try{
+        const dec = jwt.decode(token);
+        if(dec){
+          console.log(dec);
+          const pay = dec
           setLoggedIn(true);
-          setIsAdmin(decoded.isAdmin);
-          setUsername(decoded.username);
+          setIsAdmin(dec['admin']?false:true);
+          setUsername(dec['username']);
         }
-      });
-    }
+        /*jwt.verify(token, NEXT_PUBLIC_JWT_SECRET, (err, decoded) => {
+          if (err) {
+            console.log(err);
+            alert(err)
+            localStorage.removeItem('token');
+          } else {
+            setLoggedIn(true);
+            console.log(decoded);
+            //setIsAdmin(decoded.isAdmin);
+            //setUsername(decoded.username);
+          }
+        });*/
+      }catch(err){
+        console.log(err);
+      }
+    } 
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,9 +54,15 @@ export const Login = () => {
       },
       body: JSON.stringify({ username, password })
     });
+<<<<<<< HEAD
     const data = await response.json();
     console.log(data);
     if (response.ok) {
+=======
+    console.log("submit");
+    if (response.ok) {
+      const data = await response.json();
+>>>>>>> f909b111869ccb05aad5254f1b84c284a773ba55
       setLoggedIn(true);
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
@@ -49,6 +73,18 @@ export const Login = () => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  let message;
+  if (!loggedIn) {
+    message = <div>You are not logged in.</div>;
+  } else if (isAdmin) {
+    message = <div>You are an admin.</div>;
+  } else {
+    message = <div>You are not an admin, but you are awesome!</div>;
+  }
+
+>>>>>>> f909b111869ccb05aad5254f1b84c284a773ba55
   return (
     <div className="max-w-xs mx-auto">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
