@@ -11,9 +11,8 @@ interface Event {
   updated: string;
 }
 
-export const Events: React.FC<{ title: string; isAdmin: boolean }> = ({
+export const Events: React.FC<{ title: string }> = ({
   title,
-  isAdmin,
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -22,27 +21,6 @@ export const Events: React.FC<{ title: string; isAdmin: boolean }> = ({
       const res = await fetch(`${BaseUrl}/event/`);
       const data = await res.json();
       setEvents(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async function deleteEvent(id: number) {
-    try {
-      const res = await fetch(`${BaseUrl}/event/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      });
-
-      if (res.status === 200) {
-        // remove deleted event from events list
-        const newEvents = events.filter((event) => event.id !== id);
-        setEvents(newEvents);
-      } else {
-        console.error(`Failed to delete event with ID ${id}`);
-      }
     } catch (error) {
       console.error(error);
     }
@@ -61,9 +39,6 @@ export const Events: React.FC<{ title: string; isAdmin: boolean }> = ({
             {event.name}
           </Link>
           <p className="mt-2">{event.description}</p>
-          {isAdmin && (
-            <button onClick={() => deleteEvent(event.id)}>Delete</button>
-          )}
         </li>
       ))}
     </ul>

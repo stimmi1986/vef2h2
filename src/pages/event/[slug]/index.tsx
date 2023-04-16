@@ -1,12 +1,6 @@
 import { BaseUrl } from "$/components/Layout";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../auth";
-import { useVerify } from '$/components/Verify';
-
-const MyComponent = () => {
-  const { loggedIn, isAdmin } = useVerify();
-};
+import { useState } from "react";
 interface Event {
   id: number;
   name: string;
@@ -34,7 +28,7 @@ function Event({ event }: { event: Event }) {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${BaseUrl}/event/${event.id}`, {
+      const res = await fetch(`${BaseUrl}/event/${event}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +54,6 @@ function Event({ event }: { event: Event }) {
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      {('loggedIn' || 'admin') && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
@@ -96,7 +89,6 @@ function Event({ event }: { event: Event }) {
             Save Changes
           </button>
         </form>
-      )}
     </div>
   );
 }

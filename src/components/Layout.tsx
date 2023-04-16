@@ -12,22 +12,22 @@ export const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
-  const [loggedIn, setLoggedIn] = useState(typeof localStorage !== 'undefined' && Boolean(localStorage.getItem('token')));
+  const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  const handleLogout = async () => {
+  const handleLogout = async ( admin: boolean) => {
     const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer`,
       },
     });
     if (response.status === 200) {
       localStorage.removeItem('token');
-      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      document.cookie = 'token=; expires=;';
       setLoggedIn(false);
+      setIsAdmin(admin);
       router.push('/');
     }
   };
