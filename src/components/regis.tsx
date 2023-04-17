@@ -1,33 +1,46 @@
+import { useEffect, useState } from "react";
 
+interface Regi {
+    id: number;
+    name: string;
+    username: string;
+    comment: string;
+    created: string;
+    updated: string;
+  }
+  
+export const Regis: React.FC<{ slug: string }> = ({
+    slug,
+  }) => {    
+    const [Regis, setRegis] = useState<Regi[]>([]);
 
-export async function regis(slug:string){
-    const regisGet = async () => {
+    async function regisGet(){
+        try{
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/event/${slug}/regis`,{
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
             }
         })
-        if(!response){
-
-        }
+    
         const dat = await response.json();
-        let regs = `<>`;
-        for(const d of dat){
-            if(!d.name||!d.username){
-                continue;
-            }
-            regs = regs.concat(`<div> <p> ${d.name}</p><p>${d.username}</p>`);
-            console.log(regs)
-            if(!d.comment){
-                regs = regs.concat(`</div>`)
-            }else{
-                regs =regs.concat(`<p>${d.comment}</p></div>`)
-            }
-        }regs = regs.concat(`</>`);
-        console.log(regs);
-        return regs;
+        setRegis(dat);
+        }catch(error) {
+            console.error(error);
+        }
         
     }
-    return await regisGet();
+    useEffect(() => {
+        regisGet();
+    }, []); 
+    
+    return (<ul className="divide-y divide-gray-300">
+      {Regis.map((d,i)=>(
+          <li key={i} className="py-4">
+              <p>{d.name}</p>
+              <p>{d.comment}</p>
+          </li>
+      ))}
+      </ul>
+    )
 }

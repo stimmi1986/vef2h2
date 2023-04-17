@@ -1,5 +1,5 @@
 import { BaseUrl } from "$/components/Layout";
-import { regis } from "$/components/regis";
+import { Regis } from "$/components/regis";
 import { useRouter } from "next/router";
 import { useState } from "react";
 interface Event {
@@ -8,7 +8,7 @@ interface Event {
   description: string;
 }
 
-function Event({ event, regs }: { event: Event }) {
+function Event({ event,slug }: { event: Event }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -55,7 +55,7 @@ function Event({ event, regs }: { event: Event }) {
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      ${regs}
+      <Regis slug = {slug}/>
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
@@ -107,12 +107,10 @@ export async function getServerSideProps(context: Context) {
 
   const res = await fetch(`${BaseUrl}/event/${slug}`);
   const event = await res.json();
-  const regs = await regis(slug);
-
   return {
     props: {
       event,
-      regs,
+      slug,
     },
   };
 }

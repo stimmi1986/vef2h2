@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       localStorage.removeItem('token');
       document.cookie = 'token=; expires=;';
       setLoggedIn(false);
-      setIsAdmin(admin);
+      setIsAdmin(false);
       router.push('/');
     }
   };
