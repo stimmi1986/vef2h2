@@ -1,4 +1,5 @@
 import { BaseUrl } from "$/components/Layout";
+import { GetEventImgs } from "$/components/img";
 import { Regis } from "$/components/regis";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -55,6 +56,7 @@ function Event({ event,slug }: { event: Event }) {
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
+      <GetEventImgs event = {slug}/>
       <Regis slug = {slug}/>
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
