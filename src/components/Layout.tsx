@@ -15,7 +15,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const handleLogout = async ( admin: boolean) => {
+  const handleLogout = async () => {
     const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
@@ -39,10 +39,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       if (dec) {
         console.log(dec);
         setLoggedIn(true);
-        setIsAdmin(dec.admin);
+        setIsAdmin(true);
       }
     }
-  }, []);
+  }, [isAdmin, loggedIn]);
 
   return (
     <div className="flex flex-col h-screen">
