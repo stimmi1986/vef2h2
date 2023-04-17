@@ -32,7 +32,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         if (dec) {
           console.log(dec);
           setLoggedIn(true);
-          setIsAdmin(dec.admin);
+          setIsAdmin(true);
           setUsername(dec.username);
         }
       } catch (err) {

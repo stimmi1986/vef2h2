@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
-import { BaseUrl } from '../components/Layout';
+import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '../components/Layout';
+import { useRouter } from 'next/router';
+import { AuthContext } from './auth';
+import jwt from 'jsonwebtoken';
 
 interface Event {
   id: number;
@@ -15,6 +18,8 @@ export const Events: React.FC<{ title: string }> = ({
   title,
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
+  const router = useRouter();
+  const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
 
   async function fetchEvents() {
     try {
@@ -26,9 +31,31 @@ export const Events: React.FC<{ title: string }> = ({
     }
   }
 
+  const handleDelete = async (slug: string) => {
+    const response = await fetch(`${BaseUrl}/event/${slug}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ slug })
+    });
+    if (response.ok) {
+      fetchEvents();
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
-  }, []);
+    const token = localStorage.getItem('token');
+    if (token && NEXT_PUBLIC_JWT_SECRET) {
+      const dec = jwt.decode(token);
+      if (dec) {
+        console.log(dec);
+        setLoggedIn(true);
+        setIsAdmin(true);
+      }
+    }
+  }, [isAdmin, loggedIn, setIsAdmin, setLoggedIn]);
 
   return (
     <ul className="divide-y divide-gray-300">
@@ -38,6 +65,13 @@ export const Events: React.FC<{ title: string }> = ({
           <Link href={`/event/${event.slug}`} className="text-lg font-bold">
             {event.name}
           </Link>
+          {isAdmin && (
+            <button
+              className='text-2ml font-bold ml-4 hover:text-red-500'
+              onClick={() => handleDelete(event.slug)}
+            >
+              delete?
+            </button>)}
           <p className="mt-2">{event.description}</p>
         </li>
       ))}
