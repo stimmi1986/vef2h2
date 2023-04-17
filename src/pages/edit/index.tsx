@@ -14,7 +14,7 @@ interface Event {
   updated: string;
 }
 
-function SignUp({ event }: { event: Event }) {
+function Event({ event }: { event: Event }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [description, setDescription] = useState("");
@@ -22,23 +22,23 @@ function SignUp({ event }: { event: Event }) {
   const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
 
 
-  const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
 
-  const handleSignUpDescription = (
+  const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setDescription(event.target.value);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>,) => {
     event.preventDefault();
     setIsSubmitting(true);
 
     try {
       const res = await fetch(`${BaseUrl}/event/${event}`, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -48,16 +48,15 @@ function SignUp({ event }: { event: Event }) {
       console.log(data);
       setUsername("");
       setDescription("");
+      setIsAdmin(true)
+      setLoggedIn(true)
       setIsSubmitting(false);
+      router.push('/')
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);
     }
   };
-
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col items-center">
@@ -72,8 +71,8 @@ function SignUp({ event }: { event: Event }) {
             <input
               type="text"
               id="name"
-              value={name}
-              onChange={handleSignUpName}
+              value={event}
+              onChange={handleNameChange}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -87,7 +86,7 @@ function SignUp({ event }: { event: Event }) {
             <textarea
               id="description"
               value={description}
-              onChange={handleSignUpDescription}
+              onChange={handleDescriptionChange}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -124,4 +123,4 @@ export async function getServerSideProps(context: Context) {
   };
 }
 
-export default SignUp;
+export default Event;

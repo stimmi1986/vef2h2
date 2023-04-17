@@ -48,11 +48,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex flex-col h-screen">
       {/* Header */}
       <header className="flex justify-between items-center px-4 py-2 bg-gray-800 text-white">
-        <h1 className="text-lg font-bold">Viðburðasíða fyrir Vefforritun 2</h1>
-        <Link href="/">
-          <button className="text-blue-400 hover:text-blue-300">Skoða Viðburði</button>
-        </Link>
+        <div className="flex items-center">
+          <h1 className="text-lg font-bold mr-8">Viðburðasíða fyrir Vefforritun 2</h1>
+        </div>
+        <div className="flex items-center">
+        {isAdmin && (
+          <Link href="/makeCourse">
+            <button className="text-blue-400 font-bold hover:text-blue-300 mr-8">Búa til viðburð?</button>
+          </Link>
+        )}
+          <Link href="/">
+            <button className="text-blue-400 font-bold hover:text-blue-300 mr-8">Skoða Viðburði</button>
+          </Link>
+        </div>
       </header>
+
 
       {/* Main */}
       <main className="flex-grow px-4 py-2">

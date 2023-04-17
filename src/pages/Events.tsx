@@ -66,12 +66,19 @@ export const Events: React.FC<{ title: string }> = ({
             {event.name}
           </Link>
           {isAdmin && (
+            <>
             <button
-              className='text-2ml font-bold ml-4 hover:text-red-500'
+              className='text-2ml ml-4 mr-4 hover:text-red-500'
               onClick={() => handleDelete(event.slug)}
             >
               delete?
-            </button>)}
+            </button>
+            <>or</>
+            <Link href={`/event/${event.slug}/edit`} className='text-2ml ml-4 hover:text-green-500'>
+            Edit?
+            </Link>
+            </>
+          )}
           <p className="mt-2">{event.description}</p>
         </li>
       ))}

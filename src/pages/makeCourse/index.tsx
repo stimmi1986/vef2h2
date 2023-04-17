@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
 import { useRouter } from "next/router";
-import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
-import jwt from 'jsonwebtoken';
 
-interface Event {
+interface EventProps {
   id: number;
   name: string;
   slug: string;
@@ -14,19 +12,22 @@ interface Event {
   updated: string;
 }
 
-function SignUp({ event }: { event: Event }) {
+interface Props {
+  event: EventProps;
+}
+
+function Event({ event }: { event: EventProps }) {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
+  const { isAdmin, setIsAdmin } = useContext(AuthContext);
 
-
-  const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
   };
 
-  const handleSignUpDescription = (
+  const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setDescription(event.target.value);
@@ -37,43 +38,40 @@ function SignUp({ event }: { event: Event }) {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${BaseUrl}/event/${event}`, {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${BaseUrl}/event/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ username, description }),
+        body: JSON.stringify({ name, description }),
       });
       const data = await res.json();
       console.log(data);
-      setUsername("");
+      setName("");
       setDescription("");
       setIsSubmitting(false);
+      router.push('/')
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);
     }
   };
 
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
-      <p className="text-lg mb-6">{event.description}</p>
-      {loggedIn && isAdmin && (
+    <>
+      {isAdmin && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
-              Name
+              Hvað á atburðurinn að heita?
             </label>
             <input
               type="text"
               id="name"
               value={name}
-              onChange={handleSignUpName}
+              onChange={handleNameChange}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -82,12 +80,12 @@ function SignUp({ event }: { event: Event }) {
               htmlFor="description"
               className="block text-gray-700 font-bold mb-2"
             >
-              Description
+              Um hvað á atburðurinn að vera?
             </label>
             <textarea
               id="description"
               value={description}
-              onChange={handleSignUpDescription}
+              onChange={handleDescriptionChange}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -96,11 +94,11 @@ function SignUp({ event }: { event: Event }) {
             disabled={isSubmitting}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Save Changes
+            Búa til atburð
           </button>
         </form>
       )}
-    </div>
+    </>
   );
 }
 
@@ -124,4 +122,4 @@ export async function getServerSideProps(context: Context) {
   };
 }
 
-export default SignUp;
+export default Event;
