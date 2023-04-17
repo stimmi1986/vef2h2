@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
+import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
 import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
@@ -63,6 +64,7 @@ function SignUp({ event }: { event: Event }) {
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
+      <GetEventImgs event = {slug}/>
       {loggedIn && isAdmin && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
