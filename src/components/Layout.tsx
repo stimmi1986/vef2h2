@@ -16,11 +16,12 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const handleLogout = async () => {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        Authorization: `Bearer`,
+        "Authorization": `Bearer ${token}`,
       },
     });
     if (response.status === 200) {

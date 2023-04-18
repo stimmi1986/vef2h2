@@ -15,7 +15,7 @@ interface Event {
   updated: string;
 }
 
-function SignUp({ event }: { event: Event }) {
+function SignUp({ slug, event }: { event: Event, slug: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [description, setDescription] = useState("");
@@ -33,23 +33,26 @@ function SignUp({ event }: { event: Event }) {
     setDescription(event.target.value);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
+    ) => {
     event.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${BaseUrl}/event/${event}`, {
+      const token = localStorage.getItem("token");
+      console.log('token:1', token)
+      const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "POST",
         headers: {
+          Authorization: `bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, description }),
       });
       const data = await res.json();
       console.log(data);
-      setUsername("");
-      setDescription("");
-      setIsSubmitting(false);
+
+      setIsSubmitting(true);
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);
@@ -64,7 +67,7 @@ function SignUp({ event }: { event: Event }) {
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      <GetEventImgs event = {slug}/>
+      <GetEventImgs event = {event.slug}/>
       {loggedIn && isAdmin && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
@@ -74,7 +77,7 @@ function SignUp({ event }: { event: Event }) {
             <input
               type="text"
               id="name"
-              value={name}
+              value={username}
               onChange={handleSignUpName}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
@@ -122,6 +125,7 @@ export async function getServerSideProps(context: Context) {
   return {
     props: {
       event,
+      slug
     },
   };
 }

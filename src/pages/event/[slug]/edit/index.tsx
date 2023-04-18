@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
+import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
 import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
+
+
 
 interface Event {
   id: number;
@@ -14,47 +17,59 @@ interface Event {
   updated: string;
 }
 
-function Event({ event }: { event: Event }) {
+function Edit({ event, slug }: { event: Event, slug: string }) {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
 
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && NEXT_PUBLIC_JWT_SECRET) {
+      const dec: any = jwt.decode(token);
+      if (dec) {
+        console.log(dec);
+        setLoggedIn(true);
+        setIsAdmin(dec.admin);
+      }
+    }
+  }, []);
+
+  const handleUpdateName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
   };
 
-  const handleDescriptionChange = (
+  const handleUpdateDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setDescription(event.target.value);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>,) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+    ) => {
     event.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${BaseUrl}/event/${event}`, {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "PATCH",
         headers: {
+          Authorization: `bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, description }),
+        body: JSON.stringify({ name, description }),
       });
       const data = await res.json();
+      setLoggedIn(true);
       console.log(data);
-      setUsername("");
-      setDescription("");
-      setIsAdmin(true)
-      setLoggedIn(true)
-      setIsSubmitting(false);
-      router.push('/')
+      setIsSubmitting(true);
     } catch (error) {
       console.error(error);
-      setIsSubmitting(false);
+      setIsSubmitting(true);
     }
   };
 
@@ -66,13 +81,13 @@ function Event({ event }: { event: Event }) {
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
-              Name
+              Breyta nafni á atburð
             </label>
             <input
               type="text"
               id="name"
-              value={event}
-              onChange={handleNameChange}
+              value={name}
+              onChange={handleUpdateName}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -81,12 +96,12 @@ function Event({ event }: { event: Event }) {
               htmlFor="description"
               className="block text-gray-700 font-bold mb-2"
             >
-              Description
+              breyta lýsingu á atburð
             </label>
             <textarea
               id="description"
               value={description}
-              onChange={handleDescriptionChange}
+              onChange={handleUpdateDescription}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -95,7 +110,7 @@ function Event({ event }: { event: Event }) {
             disabled={isSubmitting}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Save Changes
+            vista breitingar
           </button>
         </form>
       )}
@@ -119,8 +134,9 @@ export async function getServerSideProps(context: Context) {
   return {
     props: {
       event,
+      slug
     },
   };
 }
 
-export default Event;
+export default Edit;

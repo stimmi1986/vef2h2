@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 import { AuthContext } from '$/pages/auth';
+import jwt from 'jsonwebtoken';
+import { BaseUrl } from '$/components/Layout';
 
 interface EventProps {
   id: number;
@@ -16,12 +17,12 @@ interface Props {
   event: EventProps;
 }
 
-function Event({ event }: { event: EventProps }) {
+function Event({ event }: Props) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAdmin, setIsAdmin } = useContext(AuthContext);
+  const { isAdmin, setIsAdmin, loggedIn, setLoggedIn } = useContext(AuthContext);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -40,22 +41,29 @@ function Event({ event }: { event: EventProps }) {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${BaseUrl}/event/`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ name, description }),
       });
       const data = await res.json();
-      console.log(data);
-      setName("");
-      setDescription("");
-      setIsSubmitting(false);
-      router.push('/')
+      if (token && process.env.NEXT_PUBLIC_JWT_SECRET) {
+        const dec = jwt.decode(token);
+        if (dec) {
+          console.log(dec);
+          setLoggedIn(true);
+          setIsAdmin(true);
+          console.log(data);
+          setIsSubmitting(false);
+          router.push('/');
+        } else {
+          console.log('Invalid token');
+        }
+      }
     } catch (error) {
       console.error(error);
-      setIsSubmitting(false);
     }
   };
 
@@ -76,10 +84,7 @@ function Event({ event }: { event: EventProps }) {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-gray-700 font-bold mb-2"
-            >
+            <label htmlFor="description" className="block text-gray-700 font-bold mb-2">
               Um hvað á atburðurinn að vera?
             </label>
             <textarea
@@ -89,37 +94,37 @@ function Event({ event }: { event: EventProps }) {
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Búa til atburð
-          </button>
-        </form>
-      )}
-    </>
-  );
-}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Búa til atburð
+            </button>
+          </form>
+        )}
+      </>
+    );
+  }
 
-interface Context {
-  query: {
-    slug: string;
-  };
-}
+  interface Context {
+    query: {
+      slug: string;
+    };
+  }
 
-export async function getServerSideProps(context: Context) {
-  const { slug } = context.query;
-  console.log(context.query)
+  export async function getServerSideProps(context: Context) {
+    const { slug } = context.query;
+    console.log(context.query)
 
-  const res = await fetch(`${BaseUrl}/event/${slug}`);
-  const event = await res.json();
+    const res = await fetch(`${BaseUrl}/event/${slug}`);
+    const event = await res.json();
 
-  return {
-    props: {
-      event,
-    },
-  };
-}
+    return {
+      props: {
+        event,
+      },
+    };
+  }
 
-export default Event;
+  export default Event;

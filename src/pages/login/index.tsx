@@ -17,7 +17,7 @@ export const Login = () => {
       if (dec) {
         console.log(dec);
         setLoggedIn(true);
-        setIsAdmin(!!dec.admin);
+        setIsAdmin(dec.admin);
       }
     }
   }, []);
