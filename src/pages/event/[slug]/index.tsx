@@ -52,7 +52,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       const data = await res.json();
       console.log(data);
 
-      setIsSubmitting(true);
+      setIsSubmitting(false);
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);
