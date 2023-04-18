@@ -64,9 +64,9 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
         body: JSON.stringify({ name, description }),
       });
       const data = await res.json();
-      setLoggedIn(true);
+      setLoggedIn(false);
       console.log(data);
-      setIsSubmitting(true);
+      setIsSubmitting(false);
     } catch (error) {
       console.error(error);
       setIsSubmitting(true);
