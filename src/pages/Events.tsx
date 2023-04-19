@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { AuthContext } from './auth';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
+import { cookies } from 'next/dist/client/components/headers';
 
 interface Event {
   id: number;
@@ -33,13 +34,15 @@ export const Events: React.FC<{ title: string }> = ({
   }
 
   const handleDelete = async (slug: string) => {
+    const token = Cookies.get('signin');
     const response = await fetch(`${BaseUrl}/event/${slug}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ slug })
+      body: JSON.stringify({slug,token})
     });
+    console.log(response);
     if (response.ok) {
       fetchEvents();
     }

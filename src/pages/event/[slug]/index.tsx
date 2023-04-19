@@ -48,7 +48,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
           Authorization: `${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, description }),
+        body: JSON.stringify({ username, description, token }),
       });
       const data = await res.json();
       console.log(data);
