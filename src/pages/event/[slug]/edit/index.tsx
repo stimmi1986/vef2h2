@@ -3,6 +3,7 @@ import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
 import { useRouter } from "next/router";
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
 interface Event {
   id: number;
@@ -22,7 +23,7 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
 
 
   useEffect(() => {
-    const signin = localStorage.getItem('signin');
+    const signin = Cookies.get('signin');
     if (signin && NEXT_PUBLIC_JWT_SECRET) {
       const dec: any = jwt.decode(signin);
       if (dec) {
@@ -50,7 +51,7 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
     setIsSubmitting(true);
 
     try {
-      const signin = localStorage.getItem("signin");
+      const signin = Cookies.get("signin");
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "PATCH",
         headers: {

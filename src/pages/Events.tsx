@@ -4,6 +4,7 @@ import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '../components/Layout';
 import { useRouter } from 'next/router';
 import { AuthContext } from './auth';
 import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
 interface Event {
   id: number;
@@ -46,7 +47,7 @@ export const Events: React.FC<{ title: string }> = ({
 
   useEffect(() => {
     fetchEvents();
-    const token = localStorage.getItem('signin');
+    const token = Cookies.get('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
       if (dec) {

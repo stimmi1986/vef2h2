@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
 import { BaseUrl } from '$/components/Layout';
+import Cookies from 'js-cookie';
 
 interface EventProps {
   id: number;
@@ -39,7 +40,7 @@ function Event({ event }: Props) {
     setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem('signin');
+      const token = Cookies.get('signin');
       const res = await fetch(`${BaseUrl}/event/`, {
         method: 'POST',
         headers: {

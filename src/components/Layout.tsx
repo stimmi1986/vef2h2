@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const handleLogout = async () => {
-    const token = localStorage.getItem('signin');
+    const token = Cookies.get('signin');
     const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
@@ -25,7 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       },
     });
     if (response.status === 200) {
-      localStorage.removeItem('signin');
+      Cookies.remove('signin');
       document.cookie = 'token=; expires=;';
       setLoggedIn(false);
       setIsAdmin(false);
@@ -34,7 +35,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('signin');
+    const token = Cookies.get('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
       if (dec) {

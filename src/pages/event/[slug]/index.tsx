@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
 interface Event {
   id: number;
@@ -39,12 +40,12 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
     setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem("signin");
+      const token = Cookies.get("signin");
       console.log('token:1', token)
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "POST",
         headers: {
-          Authorization: `bearer ${token}`,
+          Authorization: `${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, description }),

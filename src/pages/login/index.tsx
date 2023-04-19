@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import jwt from "jsonwebtoken";
 import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '$/components/Layout';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 export const Login = () => {
   const router = useRouter();
@@ -11,7 +12,7 @@ export const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('signin');
+    const token = Cookies.get('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec: any = jwt.decode(token);
       if (dec) {
@@ -38,7 +39,7 @@ export const Login = () => {
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
       if (data.access_Token) {
-        localStorage.setItem('signin', data.access_Token);
+        Cookies.set('signin', data.access_Token);
       }
       router.push('/');
     }
