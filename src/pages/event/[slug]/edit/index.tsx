@@ -52,16 +52,23 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
 
     try {
       const signin = Cookies.get("signin");
+      const token = localStorage.getItem("token");
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "PATCH",
         headers: {
-          Authorization: `${signin}`,
+          Authorization: `${token}`,
           "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify({ name, description }),
       });
       const data = await res.json();
-      console.log(data); // Log the response from the server
+      if (res.ok) {
+        localStorage.setItem("signin", data.signin);
+      }
+
+
+
+      console.log(data);
       setLoggedIn(true);
       setIsAdmin(true);
     } catch (error) {
