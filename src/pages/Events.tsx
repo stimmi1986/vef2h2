@@ -46,7 +46,7 @@ export const Events: React.FC<{ title: string }> = ({
 
   useEffect(() => {
     fetchEvents();
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
       if (dec) {

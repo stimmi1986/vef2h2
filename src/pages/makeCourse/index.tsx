@@ -39,7 +39,7 @@ function Event({ event }: Props) {
     setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('signin');
       const res = await fetch(`${BaseUrl}/event/`, {
         method: 'POST',
         headers: {

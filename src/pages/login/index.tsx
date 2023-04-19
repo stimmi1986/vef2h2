@@ -11,7 +11,7 @@ export const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec: any = jwt.decode(token);
       if (dec) {
@@ -38,7 +38,7 @@ export const Login = () => {
       setUsername(data.username);
       setIsAdmin(data.isAdmin);
       if (data.access_Token) {
-        localStorage.setItem('token', data.access_Token);
+        localStorage.setItem('signin', data.access_Token);
       }
       router.push('/');
     }

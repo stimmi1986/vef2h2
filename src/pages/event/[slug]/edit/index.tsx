@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
-import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
-import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
-
-
 
 interface Event {
   id: number;
@@ -26,9 +22,9 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
 
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token && NEXT_PUBLIC_JWT_SECRET) {
-      const dec: any = jwt.decode(token);
+    const signin = localStorage.getItem('signin');
+    if (signin && NEXT_PUBLIC_JWT_SECRET) {
+      const dec: any = jwt.decode(signin);
       if (dec) {
         console.log(dec);
         setLoggedIn(true);
@@ -49,27 +45,28 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>
-    ) => {
+  ) => {
     event.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const signin = localStorage.getItem("signin");
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "PATCH",
         headers: {
-          Authorization: `bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `${signin}`,
+          "Content-Type": "application/json; charset=utf-8",
         },
         body: JSON.stringify({ name, description }),
       });
       const data = await res.json();
-      setLoggedIn(false);
-      console.log(data);
-      setIsSubmitting(false);
+      console.log(data); // Log the response from the server
+      setLoggedIn(true);
+      setIsAdmin(true);
     } catch (error) {
       console.error(error);
-      setIsSubmitting(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

@@ -39,7 +39,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
     setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("signin");
       console.log('token:1', token)
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "POST",

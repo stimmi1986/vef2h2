@@ -25,7 +25,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [username, setUsername] = useState<string>('');
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('signin');
     if (token && process.env.NEXT_PUBLIC_JWT_SECRET) {
       try {
         const dec = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET) as { admin: boolean, username: string };

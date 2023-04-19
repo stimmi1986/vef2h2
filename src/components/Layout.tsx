@@ -16,7 +16,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const handleLogout = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('signin');
     const response = await fetch(`${BaseUrl}/logout`, {
       method: 'POST',
       headers: {
@@ -25,7 +25,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       },
     });
     if (response.status === 200) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('signin');
       document.cookie = 'token=; expires=;';
       setLoggedIn(false);
       setIsAdmin(false);
@@ -34,7 +34,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
       if (dec) {
@@ -43,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         setIsAdmin(true);
       }
     }
-  }, [isAdmin, loggedIn]);
+  }, [router]);
 
   return (
     <div className="flex flex-col h-screen">

@@ -34,7 +34,7 @@ export const GetEventImgs: React.FC<{event:string}> = ({event})=>{
 
 
 }
-export const GetAllImgs: React.FC<{}> = () => { 
+export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs(){
     try{
@@ -50,7 +50,7 @@ export const GetAllImgs: React.FC<{}> = () => {
   }
   useEffect(() => {
     AllImgs();
-}, []); 
+}, []);
 
 return (<ul className="divide-y divide-gray-300">
   {img.map((d,i)=>(
