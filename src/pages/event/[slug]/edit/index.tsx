@@ -60,7 +60,13 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
         body: JSON.stringify({ name, description, token }),
       });
       const data = await res.json();
-      console.log(data); // Log the response from the server
+      if (res.ok) {
+        localStorage.setItem("signin", data.signin);
+      }
+
+
+
+      console.log(data);
       setLoggedIn(true);
       setIsAdmin(true);
     } catch (error) {
