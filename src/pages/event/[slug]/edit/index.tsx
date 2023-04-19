@@ -51,14 +51,13 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
     setIsSubmitting(true);
 
     try {
-      const signin = Cookies.get("signin");
+      const token = Cookies.get("signin");
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "PATCH",
         headers: {
-          Authorization: `${signin}`,
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify({ name, description }),
+        body: JSON.stringify({ name, description, token }),
       });
       const data = await res.json();
       console.log(data); // Log the response from the server
