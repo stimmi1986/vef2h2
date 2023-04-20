@@ -70,6 +70,7 @@ export const AddImgForm: React.FC<{}> = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <form onSubmit={ImgSubmitter} className="w-full max-w-lg">
       <div className="mb-4">
@@ -90,10 +91,7 @@ export const AddImgForm: React.FC<{}> = () => {
     </form>
   )
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 70ee02f79bb3c0b4a0ef380ceedecac7ad0be67e
 export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
   const router = useRouter();
   const [name, setName] = useState("");
@@ -142,6 +140,7 @@ export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
       setIsSubmitting(false);
     }
   };
+
   return(<form  className="w-full max-w-lg">
     <ImgNameSelect func={handleName}/>
     <button
@@ -153,6 +152,7 @@ export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
           </button>
   </form>)
 }
+
 export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
   const [img, setImg] = useState<img[]>([]);
   async function EvImgs() {
@@ -166,9 +166,11 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
       console.log(error)
     }
   }
+
   useEffect(() => {
     EvImgs();
   }, []);
+
   return (<ul className="divide-y divide-gray-300">
     {img.map((d, i) => (
       <li key={i} className="py-4">
@@ -178,6 +180,7 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
   </ul>
   )
 }
+
 export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
@@ -192,9 +195,11 @@ export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
       console.log(error);
     }
   }
+
   useEffect(() => {
     AllImgs();
   }, []);
+
   return (
   <select name="img" id="img" onChange={func}  className="w-full max-w-lg">
     {img.map((d,i)=>(
@@ -202,6 +207,7 @@ export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
     ))}
   </select>)
 }
+
 export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
@@ -216,6 +222,7 @@ export const GetAllImgs: React.FC<{}> = () => {
       console.log(error);
     }
   }
+
   useEffect(() => {
     AllImgs();
   }, []);
@@ -236,6 +243,7 @@ export const GetAllImgs: React.FC<{}> = () => {
   )
 
 }
+
 const ShowImg: React.FC<{url:string, name: string}> = ({url,name})=>{
   return (<img src={url} alt={name} width="400"/> )
 }
