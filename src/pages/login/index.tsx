@@ -37,7 +37,7 @@ export const Login = () => {
       const data = await response.json();
       setLoggedIn(true);
       setUsername(data.username);
-      setIsAdmin(data.isAdmin);
+      setIsAdmin(data.admin);
       if (data.access_Token) {
         Cookies.set('signin', data.access_Token);
       }

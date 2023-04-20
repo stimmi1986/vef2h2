@@ -1,29 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
 import { BaseUrl } from '$/components/Layout';
 import Cookies from 'js-cookie';
 
-interface EventProps {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  created: string;
-  updated: string;
-}
 
-interface Props {
-  event: EventProps;
-}
-
-function Event({ event }: Props) {
+function Event() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAdmin, setIsAdmin, loggedIn, setLoggedIn } = useContext(AuthContext);
+  const { isAdmin, setIsAdmin, setLoggedIn } = useContext(AuthContext);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -47,7 +35,7 @@ function Event({ event }: Props) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name, description }),
+        body: JSON.stringify({ name, description, token }),
       });
       const data = await res.json();
       if (token && process.env.NEXT_PUBLIC_JWT_SECRET) {

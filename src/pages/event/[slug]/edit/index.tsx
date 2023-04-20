@@ -60,19 +60,21 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
         body: JSON.stringify({ name, description, token }),
       });
       const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("signin", data.signin);
+      if (token && process.env.NEXT_PUBLIC_JWT_SECRET) {
+        const dec = jwt.decode(token);
+        if (dec) {
+          console.log(dec);
+          setLoggedIn(true);
+          setIsAdmin(true);
+          console.log(data);
+          setIsSubmitting(false);
+          router.push('/');
+        } else {
+          console.log('Invalid token');
+        }
       }
-
-
-
-      console.log(data);
-      setLoggedIn(true);
-      setIsAdmin(true);
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

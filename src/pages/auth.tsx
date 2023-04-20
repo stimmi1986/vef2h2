@@ -20,7 +20,7 @@ const defaultAuthContext: AuthContextType = {
   setUsername: () => {},
 };
 
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');

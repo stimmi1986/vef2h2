@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
-import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '../components/Layout';
+import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '$/components/Layout';
 import { useRouter } from 'next/router';
 import { AuthContext } from './auth';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
-import { cookies } from 'next/dist/client/components/headers';
 
 interface Event {
   id: number;
@@ -20,7 +19,6 @@ export const Events: React.FC<{ title: string }> = ({
   title,
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
-  const router = useRouter();
   const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
 
   async function fetchEvents() {
@@ -53,10 +51,10 @@ export const Events: React.FC<{ title: string }> = ({
     const token = Cookies.get('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
-      if (dec) {
+      if (dec && typeof dec !== 'string') {
         console.log(dec);
         setLoggedIn(true);
-        setIsAdmin(true);
+        setIsAdmin(dec.admin);
       }
     }
   }, [isAdmin, loggedIn, setIsAdmin, setLoggedIn]);

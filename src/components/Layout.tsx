@@ -15,36 +15,35 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
-  const handleLogout = async () => {
-    const token = Cookies.get('signin');
-    const response = await fetch(`${BaseUrl}/logout`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-    if (response.status === 200) {
-      Cookies.remove('signin');
-      document.cookie = 'token=; expires=;';
-      setLoggedIn(false);
-      setIsAdmin(false);
-      router.push('/');
-    }
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    Cookies.remove('signin');
+    setLoggedIn(false);
+    setIsAdmin(false);
+    router.push('/');
   };
 
   useEffect(() => {
     const token = Cookies.get('signin');
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
-      if (dec) {
+      if (dec && typeof dec !== 'string') {
         console.log(dec);
         setLoggedIn(true);
-        setIsAdmin(true);
+        setIsAdmin(dec.admin);
       }
     }
   }, [router]);
+
+  useEffect(() => {
+    if (isSigningOut) {
+      setTimeout(() => {
+        location.reload();
+      }, 500);
+    }
+  }, [isSigningOut]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -79,7 +78,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         <div className="flex items-center">
           {loggedIn ? (
-            <button onClick={handleLogout}>Sign Out</button>
+            <button onClick={handleSignOut}>Sign Out</button>
           ) : (
             <>
               <Link href="/signup">
