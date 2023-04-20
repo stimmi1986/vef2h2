@@ -1,5 +1,5 @@
-import { GetAllImgs } from "$/components/img";
+import { AddImgForm, GetAllImgs } from "$/components/img";
 
 export default function Home() {
-    return <GetAllImgs/>
+    return <><AddImgForm/><GetAllImgs/></>
   };
