@@ -7,7 +7,7 @@ import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 import { UsernameToken } from '$/components/Verify';
-import { UserNameOrSelect } from '$/components/regis';
+import { Regis, UserNameOrSelect } from '$/components/regis';
 
 interface Event {
   id: number;
@@ -77,6 +77,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
       <GetEventImgs event = {event.slug}/>
+      <Regis slug = {slug}/>
       {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
