@@ -23,16 +23,14 @@ interface Registration {
 }
 
 
-function SignUp({ slug, event, regis, uname,nafn }: { event: Event, slug: string,  regis:Registration[],uname:string,nafn:string}) {
+function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Registration[],uname:string,nafn:string}) {
   const router = useRouter();
-  const [username, setUsername] = useState(uname);
-  const [name, setName] = useState(nafn);
+  const [username, setUsername] = useState(UsernameToken);
+  const [name, setName] = useState(NameToken());
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations]= useState<Registration[]>(regis);
-  console.log(nafn);
-
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     setName(event.target.value);
@@ -51,6 +49,7 @@ function SignUp({ slug, event, regis, uname,nafn }: { event: Event, slug: string
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
   ) => {
+    console.log("submiting");
     event.preventDefault();
     setIsSubmitting(true);
     try {
@@ -158,15 +157,12 @@ export async function getServerSideProps(context: Context) {
   const event = await res.json();
   const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
   const regis = await response.json();
-  const uname = UsernameToken();
-  const nafn = NameToken();
+
   return {
     props: {
       event,
       slug,
-      regis,
-      uname,
-      nafn
+      regis
     },
   };
 }
