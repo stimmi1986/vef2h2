@@ -23,20 +23,18 @@ interface Registration {
 }
 
 
-function SignUp({ slug, event }: { event: Event, slug: string }) {
+function SignUp({ slug, event, regis, uname,nafn }: { event: Event, slug: string,  regis:Registration[],uname:string,nafn:string}) {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState(uname);
+  const [name, setName] = useState(nafn);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
-  if(loggedIn){
-    setUsername(UsernameToken());
-    setName(NameToken())
-  };
+  const [registrations, setRegistrations]= useState<Registration[]>(regis);
+  console.log(nafn);
 
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
     setName(event.target.value);
   };
 
@@ -77,20 +75,19 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       setIsSubmitting(false);
     }
   };
-  useEffect(() => {
-    async function fetchRegistrations() {
-      const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
-      const data = await response.json();
-      setRegistrations(data);
+  useEffect(()=>{
+    async function getRegis(){
+    const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+    const regis = await response.json();
+    setRegistrations(regis);
     }
-    fetchRegistrations();
-  }, []);
-
-
+    getRegis();
+  },[]);
+  
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
-  const usernameOrSel = UserNameOrSelect(isAdmin,()=>handleUsername);
+  const usernameOrSel = UserNameOrSelect(isAdmin,handleUsername);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -98,7 +95,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       <p className="text-lg mb-6">{event.description}</p>
       <GetEventImgs event = {event.slug}/>
       {loggedIn && (
-        <form onSubmit={()=>handleSubmit} className="w-full max-w-lg">
+        <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
               Nafn
@@ -107,7 +104,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               type="text"
               id="name"
               value={name}
-              onChange={()=>handleSignUpName}
+              onChange={handleSignUpName}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -121,7 +118,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
             <textarea
               id="comment"
               value={comment}
-              onChange={()=>handleSignUpDescription}
+              onChange={handleSignUpDescription}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -159,11 +156,17 @@ export async function getServerSideProps(context: Context) {
 
   const res = await fetch(`${BaseUrl}/event/${slug}`);
   const event = await res.json();
-
+  const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+  const regis = await response.json();
+  const uname = UsernameToken();
+  const nafn = NameToken();
   return {
     props: {
       event,
-      slug
+      slug,
+      regis,
+      uname,
+      nafn
     },
   };
 }
