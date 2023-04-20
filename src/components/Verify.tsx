@@ -28,6 +28,17 @@ export const useVerify = (): VerifyResponse => {
     isAdmin,
   };
 };
+<<<<<<< HEAD
+export function UsernameToken(){
+  const [username, setUsername] = useState<string>("");
+  useEffect(()=>{
+    const token = Cookies.get('signin');
+    if(token){
+      const dec: any = jwt.decode(token);
+      if(dec){
+        setUsername(dec.username)
+      }
+=======
 export function UsernameToken(){ 
   let username = "";
   const token = Cookies.get('signin');
@@ -35,10 +46,13 @@ export function UsernameToken(){
     const dec: any = jwt.decode(token)
     if(dec){
      username = dec.username
+>>>>>>> e48ed2814550044899a3800326a93725ca11f776
     }
   }
   return username;
 }
+<<<<<<< HEAD
+=======
 export function NameToken(){
   const token = Cookies.get('signin');
   if(token){
@@ -49,3 +63,4 @@ export function NameToken(){
   }
   return "";
 }
+>>>>>>> e48ed2814550044899a3800326a93725ca11f776

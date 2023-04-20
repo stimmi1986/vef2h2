@@ -90,7 +90,10 @@ export const AddImgForm: React.FC<{}> = () => {
     </form>
   )
 }
+<<<<<<< HEAD
+=======
 
+>>>>>>> e48ed2814550044899a3800326a93725ca11f776
 export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
   const router = useRouter();
   const [name, setName] = useState("");
@@ -175,7 +178,10 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
   </ul>
   )
 }
+<<<<<<< HEAD
+=======
 
+>>>>>>> e48ed2814550044899a3800326a93725ca11f776
 export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
@@ -194,7 +200,10 @@ export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
     AllImgs();
   }, []);
   return (
+<<<<<<< HEAD
+=======
 
+>>>>>>> e48ed2814550044899a3800326a93725ca11f776
   <select name="img" id="img" onChange={func}  className="w-full max-w-lg">
     {img.map((d,i)=>(
       <option key={i} value={d.name}>{d.name}</option>
@@ -235,7 +244,10 @@ export const GetAllImgs: React.FC<{}> = () => {
   )
 
 }
+<<<<<<< HEAD
+=======
 
+>>>>>>> e48ed2814550044899a3800326a93725ca11f776
 const ShowImg: React.FC<{url:string, name: string}> = ({url,name})=>{
   return (<img src={url} alt={name} width="400"/> )
 }
