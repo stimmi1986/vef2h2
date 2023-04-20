@@ -59,6 +59,9 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
       },
       body: JSON.stringify({token})
     })
+    const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+    const regis = await response.json();
+    setRegistrations(regis);
 
   }
 
