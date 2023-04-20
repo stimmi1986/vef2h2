@@ -28,7 +28,7 @@ export const useVerify = (): VerifyResponse => {
     isAdmin,
   };
 };
-export function UsernameToken(){ 
+export function UsernameToken(){
   const [username, setUsername] = useState<string>("");
   useEffect(()=>{
     const token = Cookies.get('signin');

@@ -90,10 +90,6 @@ export const AddImgForm: React.FC<{}> = () => {
     </form>
   )
 }
-<<<<<<< HEAD
-export const AddEventImg: React.FC<{}> = () => {
-  return (<form>
-=======
 export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
   const router = useRouter();
   const [name, setName] = useState("");
@@ -116,7 +112,6 @@ export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
->>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
 
   const ImgSubmitter = async (
     event: React.FormEvent<HTMLFormElement>
@@ -179,11 +174,7 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
   </ul>
   )
 }
-<<<<<<< HEAD
-export const ImgNameSelect: React.FC<{}> = () => {
-=======
 export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
->>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
     try {
@@ -201,19 +192,11 @@ export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
     AllImgs();
   }, []);
   return (
-<<<<<<< HEAD
-    <select name="img" id="img">
-      {img.map((d, i) => (
-        <option key={i} value={d.name}>{d.name}</option>
-      ))}
-    </select>)
-=======
   <select name="img" id="img" onChange={func}  className="w-full max-w-lg">
     {img.map((d,i)=>(
       <option key={i} value={d.name}>{d.name}</option>
     ))}
   </select>)
->>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
 }
 export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
@@ -249,11 +232,6 @@ export const GetAllImgs: React.FC<{}> = () => {
   )
 
 }
-<<<<<<< HEAD
-const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
-  return (<img src={url} alt={name} />)
-=======
 const ShowImg: React.FC<{url:string, name: string}> = ({url,name})=>{
   return (<img src={url} alt={name} width="400"/> )
->>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
 }
