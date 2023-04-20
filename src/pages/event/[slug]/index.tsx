@@ -22,10 +22,12 @@ interface Registration {
   comment: string;
 }
 
+
 function SignUp({ slug, event }: { event: Event, slug: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState("");
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
@@ -38,7 +40,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   const handleSignUpDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setDescription(event.target.value);
+    setComment(event.target.value);
   };
   const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
     setUsername(event.target.value);
@@ -60,13 +62,13 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
           Authorization: `${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, description, token }),
+        body: JSON.stringify({ username, comment, token }),
       });
       const data = await res.json();
       console.log(data);
       setRegistrations([...registrations, data]);
       setUsername("");
-      setDescription("");
+      setComment("");
       setIsSubmitting(false);
     } catch (error) {
       console.error(error);
@@ -109,7 +111,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
           </div>
           <div className="mb-4">
             <label
-              htmlFor="description"
+              htmlFor="comment"
               className="block text-gray-700 font-bold mb-2"
             >
               Comment
