@@ -30,7 +30,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (token && NEXT_PUBLIC_JWT_SECRET) {
       const dec = jwt.decode(token);
       if (dec && typeof dec !== 'string') {
-        console.log(dec);
         setLoggedIn(true);
         setIsAdmin(dec.admin);
       }

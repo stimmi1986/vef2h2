@@ -4,8 +4,8 @@ import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
 import { AuthContext } from '$/pages/auth';
 import Cookies from 'js-cookie';
-import { UsernameToken } from '$/components/Verify';
-import { Regis, UserNameOrSelect } from '$/components/regis';
+import { NameToken, UsernameToken } from '$/components/Verify';
+import { Regis, UserNameOrSelect,DelButton } from '$/components/regis';
 
 interface Event {
   id: number;
@@ -16,57 +16,77 @@ interface Event {
   updated: string;
 }
 
-interface Registration {
+export interface Registration {
   id: number;
+  name: string;
   username: string;
   comment: string;
 }
 
 
-function SignUp({ slug, event }: { event: Event, slug: string }) {
+function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Registration[],uname:string,nafn:string}) {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState(UsernameToken);
+  const [name, setName] = useState(NameToken());
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
-
-
+  const [registrations, setRegistrations]= useState<Registration[]>(regis);
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
     setName(event.target.value);
   };
 
   const handleSignUpDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
+    event.preventDefault();
     setComment(event.target.value);
   };
   const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    event.preventDefault();
     setUsername(event.target.value);
   };
+  const handleDelete = async (event:React.MouseEvent<HTMLButtonElement>)=>{
+    const user = event.target.value;
+    console.log("delete")
+    const token = Cookies.get("signin");
+    const res = await fetch(`${BaseUrl}/event/${slug}/regis/${user}`,{
+      method:"DELETE",
+      headers:{
+        Authorization: `Bearer: ${token}`,
+        "content-Type":"application/json",
+      },
+      body: JSON.stringify({token})
+    })
+    const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+    const regis = await response.json();
+    setRegistrations(regis);
+
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
   ) => {
+    console.log("submiting");
     event.preventDefault();
     setIsSubmitting(true);
-    if(username==""){
-      setUsername(UsernameToken());
-    }
     try {
       const token = Cookies.get("signin");
       console.log('token:1', token)
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "POST",
         headers: {
-          Authorization: `${token}`,
+          Authorization:`Bearer: ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, comment, token }),
+        body: JSON.stringify({ name, username, comment, token }),
       });
+      if(res.status==405){
+        
+      }else{
       const data = await res.json();
       console.log(data);
-      setRegistrations([...registrations, data]);
+      setRegistrations([...registrations, data]);}
       setUsername("");
       setComment("");
       setIsSubmitting(false);
@@ -75,27 +95,27 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    async function fetchRegistrations() {
-      const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
-      const data = await response.json();
-      setRegistrations(data);
+  useEffect(()=>{
+    async function getRegis(){
+    const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+    const regis = await response.json();
+    setRegistrations(regis);
     }
-    fetchRegistrations();
-  }, []);
-
-
+    getRegis();
+  },[]);
+  
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
+  const usernameOrSel = UserNameOrSelect(isAdmin,handleUsername);
 
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
+      <Regis regis={registrations} user={username} admin={isAdmin} func={handleDelete}/>
       <GetEventImgs event = {event.slug}/>
-      {loggedIn && isAdmin && (
+      {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
@@ -130,7 +150,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               >
                 Username
               </label>
-            <UserNameOrSelect func={handleUsername} isAdmin={isAdmin}/>
+            {usernameOrSel}
           </div>
           <button
             type="submit"
@@ -157,11 +177,14 @@ export async function getServerSideProps(context: Context) {
 
   const res = await fetch(`${BaseUrl}/event/${slug}`);
   const event = await res.json();
+  const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+  const regis = await response.json();
 
   return {
     props: {
       event,
-      slug
+      slug,
+      regis
     },
   };
 }

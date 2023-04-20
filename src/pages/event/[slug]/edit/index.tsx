@@ -62,11 +62,11 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
       });
       const data = await res.json();
       if (token && process.env.NEXT_PUBLIC_JWT_SECRET) {
-        const dec = jwt.decode(token);
+        const dec:any = jwt.decode(token);
         if (dec) {
           console.log(dec);
           setLoggedIn(true);
-          setIsAdmin(true);
+          setIsAdmin(dec.admin);
           console.log(data);
           setIsSubmitting(false);
           router.push('/');

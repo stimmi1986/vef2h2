@@ -2,47 +2,28 @@ import { useEffect, useState } from "react";
 import { BaseUrl } from "./Layout";
 import Cookies from 'js-cookie';
 import { UsernameToken } from "./Verify";
+import { Registration } from "\$/pages/event/[slug]";
+import {Button} from "\$/components/form/Button";
 
-interface Regi {
-    id: number;
-    name: string;
-    username: string;
-    comment: string;
-    created: string;
-    updated: string;
-  }
 
-export const Regis: React.FC<{ slug: string }> = ({
-    slug,
-  }) => {
-    const [Regis, setRegis] = useState<Regi[]>([]);
-
-    async function regisGet(){
-        try{
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/event/${slug}/regis`,{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-            }
-        })
-
-        const dat = await response.json();
-        setRegis(dat);
-        console.log(dat);
-        }catch(error) {
-            console.error(error);
-        }
-
+export const DelButton: React.FC<{user:string,username:string,admin:boolean,func:Function}> = ({
+    user,username,admin,func,
+}) =>{
+    if(admin||username==user){
+        return (<button onClick={func} value={username} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"> Eyða </button>)
     }
-    useEffect(() => {
-        regisGet();
-    },[]);
+    return <></>
+}
+export const Regis: React.FC<{ regis: Registration[] , user:string, admin:boolean, func:Function}> = ({
+    regis,user,admin, func,
+  }) => {
 
     return (<ul className="divide-y divide-gray-300">
-      {Regis.map((d,i)=>(
+      {regis.map((d,i)=>(
           <li key={i} className="py-4">
               <p>{d.name}</p>
               <p>{d.comment}</p>
+              <DelButton user={user} username={d.username} admin={admin} func={func}/>
           </li>
       ))}
       </ul>
@@ -76,8 +57,8 @@ const UsernameSelect: React.FC<{func:Function}> = ({func})=>{
         ))}
     </select>);
 }
-export const UserNameOrSelect: React.FC<{isAdmin:Boolean, func:Function}> = ({isAdmin,func})=>{
-    if(isAdmin){
+export function UserNameOrSelect(Admin:boolean,func:Function){
+    if(Admin){
         return <UsernameSelect func={func}/>
     }
     const username = UsernameToken();
