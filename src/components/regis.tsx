@@ -2,24 +2,28 @@ import { useEffect, useState } from "react";
 import { BaseUrl } from "./Layout";
 import Cookies from 'js-cookie';
 import { UsernameToken } from "./Verify";
+import { Registration } from "\$/pages/event/[slug]";
+import {Button} from "\$/components/form/Button";
 
-interface Regi {
-    id: number;
-    name: string;
-    username: string;
-    comment: string;
-    created: string;
-    updated: string;
-  }
 
-export const Regis: React.FC<{ regis: Regi[] }> = ({
-    regis,
+export const DelButton: React.FC<{user:string,username:string,admin:boolean,func:Function}> = ({
+    user,username,admin,func,
+}) =>{
+    if(admin||username==user){
+        return (<button onClick={func} value={username} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"> Eyða </button>)
+    }
+    return <></>
+}
+export const Regis: React.FC<{ regis: Registration[] , user:string, admin:boolean, func:Function}> = ({
+    regis,user,admin, func,
   }) => {
+
     return (<ul className="divide-y divide-gray-300">
       {regis.map((d,i)=>(
           <li key={i} className="py-4">
               <p>{d.name}</p>
               <p>{d.comment}</p>
+              <DelButton user={user} username={d.username} admin={admin} func={func}/>
           </li>
       ))}
       </ul>
