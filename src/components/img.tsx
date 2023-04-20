@@ -90,7 +90,10 @@ export const AddImgForm: React.FC<{}> = () => {
     </form>
   )
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 70ee02f79bb3c0b4a0ef380ceedecac7ad0be67e
 export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
   const router = useRouter();
   const [name, setName] = useState("");
