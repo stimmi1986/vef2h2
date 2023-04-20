@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
+import { AddEventImg } from '$/components/img';
 
 interface Event {
   id: number;
@@ -82,7 +83,8 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      {loggedIn && isAdmin && (
+      {loggedIn && isAdmin && (<>
+        <AddEventImg slug={slug}/>
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
@@ -118,7 +120,7 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
             vista breitingar
           </button>
         </form>
-      )}
+      </>)}
     </div>
   );
 }

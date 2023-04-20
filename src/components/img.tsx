@@ -90,9 +90,68 @@ export const AddImgForm: React.FC<{}> = () => {
     </form>
   )
 }
+<<<<<<< HEAD
 export const AddEventImg: React.FC<{}> = () => {
   return (<form>
+=======
+export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
+  useEffect(() => {
+    const signin = Cookies.get('signin');
+    if (signin && NEXT_PUBLIC_JWT_SECRET) {
+      const dec: any = jwt.decode(signin);
+      if (dec) {
+        console.log(dec);
+        setLoggedIn(true);
+        setIsAdmin(dec.admin);
+      }
+    }
+  }, []);
+  if(!isAdmin || !loggedIn){
+    return <></>
+  }
+  const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+>>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
 
+  const ImgSubmitter = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`${BaseUrl}/image/${slug}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({name}),
+      });
+      const data = await res.json();
+      if (res.ok) {
+      }
+      console.log(data);
+      setLoggedIn(true);
+      setIsAdmin(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  return(<form  className="w-full max-w-lg">
+    <ImgNameSelect func={handleName}/>
+    <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            tengja mynd við viðburð
+          </button>
   </form>)
 }
 export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
@@ -120,7 +179,11 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
   </ul>
   )
 }
+<<<<<<< HEAD
 export const ImgNameSelect: React.FC<{}> = () => {
+=======
+export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
+>>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
     try {
@@ -138,11 +201,19 @@ export const ImgNameSelect: React.FC<{}> = () => {
     AllImgs();
   }, []);
   return (
+<<<<<<< HEAD
     <select name="img" id="img">
       {img.map((d, i) => (
         <option key={i} value={d.name}>{d.name}</option>
       ))}
     </select>)
+=======
+  <select name="img" id="img" onChange={func}  className="w-full max-w-lg">
+    {img.map((d,i)=>(
+      <option key={i} value={d.name}>{d.name}</option>
+    ))}
+  </select>)
+>>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
 }
 export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
@@ -178,6 +249,11 @@ export const GetAllImgs: React.FC<{}> = () => {
   )
 
 }
+<<<<<<< HEAD
 const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
   return (<img src={url} alt={name} />)
+=======
+const ShowImg: React.FC<{url:string, name: string}> = ({url,name})=>{
+  return (<img src={url} alt={name} width="400"/> )
+>>>>>>> f1dccdbd9d33c08fd2d9d87a342c891af8c6250f
 }

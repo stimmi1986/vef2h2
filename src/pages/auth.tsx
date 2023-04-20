@@ -29,11 +29,11 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
     const token = Cookies.get('signin');
     if (token && process.env.NEXT_PUBLIC_JWT_SECRET) {
       try {
-        const dec = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET) as { admin: boolean, username: string };
+        const dec = jwt.decode(token) as { admin: boolean, username: string };
         if (dec) {
           console.log(dec);
           setLoggedIn(true);
-          setIsAdmin(true);
+          setIsAdmin(dec.admin);
           setUsername(dec.username);
         }
       } catch (err) {

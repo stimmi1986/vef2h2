@@ -4,6 +4,8 @@ import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
 import { AuthContext } from '$/pages/auth';
 import Cookies from 'js-cookie';
+import { UsernameToken } from '$/components/Verify';
+import { Regis, UserNameOrSelect } from '$/components/regis';
 
 interface Event {
   id: number;
@@ -20,30 +22,37 @@ interface Registration {
   comment: string;
 }
 
+
 function SignUp({ slug, event }: { event: Event, slug: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
-  const [comment, setDescription] = useState("");
+  const [name, setName] = useState("");
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
 
 
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+    setName(event.target.value);
   };
 
   const handleSignUpDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setDescription(event.target.value);
+    setComment(event.target.value);
+  };
+  const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    setUsername(event.target.value);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     setIsSubmitting(true);
-
+    if(username==""){
+      setUsername(UsernameToken());
+    }
     try {
       const token = Cookies.get("signin");
       console.log('token:1', token)
@@ -59,7 +68,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       console.log(data);
       setRegistrations([...registrations, data]);
       setUsername("");
-      setDescription("");
+      setComment("");
       setIsSubmitting(false);
     } catch (error) {
       console.error(error);
@@ -85,29 +94,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      <div className="flex flex-col w-full">
-        <h1 className="text-lg uppercase mb-2">Skráning á atburð</h1>
-        <ul className="divide-y divide-gray-400">
-          {registrations.map((registration: Registration) => (
-            <li key={registration.id}>
-              <p className="text-gray-800 font-bold uppercase m-0 p-0">
-                Notendanafn: &nbsp;
-                <span className="text-lg text-gray-700">
-                  {registration.username}
-                </span>
-              </p>
-              <p className="text-gray-800 font-bold m-0 p-0">
-                Comment: &nbsp;
-                <span className="text-lg text-gray-700">
-                  {registration.comment}
-                <div className="divide-y divide-gray-400" />
-                </span>
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <GetEventImgs event={event.slug} />
+      <GetEventImgs event = {event.slug}/>
       {loggedIn && isAdmin && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
@@ -117,14 +104,14 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
             <input
               type="text"
               id="name"
-              value={username}
+              value={name}
               onChange={handleSignUpName}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
           <div className="mb-4">
             <label
-              htmlFor="description"
+              htmlFor="comment"
               className="block text-gray-700 font-bold mb-2"
             >
               Comment
@@ -135,6 +122,15 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               onChange={handleSignUpDescription}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 font-bold mb-2"
+              >
+                Username
+              </label>
+            <UserNameOrSelect func={handleUsername} isAdmin={isAdmin}/>
           </div>
           <button
             type="submit"
