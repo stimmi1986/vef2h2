@@ -31,7 +31,9 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
-
+  if(loggedIn){
+    setUsername(UsernameToken());
+  }
 
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -50,20 +52,17 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   ) => {
     event.preventDefault();
     setIsSubmitting(true);
-    if(username==""){
-      setUsername(UsernameToken());
-    }
     try {
       const token = Cookies.get("signin");
       console.log('token:1', token)
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "POST",
         headers: {
-          Authorization: `${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, comment, token }),
+        body: JSON.stringify({ name, username, comment, token }),
       });
+      console.log(res);
       const data = await res.json();
       console.log(data);
       setRegistrations([...registrations, data]);
@@ -75,7 +74,14 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       setIsSubmitting(false);
     }
   };
-
+  useEffect(()=>{
+    async function fetchname(){
+      const response = await fetch(`${BaseUrl}/users/${username}`)
+      const data = await response.json();
+      setName(name);
+    }
+    fetchname();
+  },[])
   useEffect(() => {
     async function fetchRegistrations() {
       const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
@@ -95,7 +101,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
       <GetEventImgs event = {event.slug}/>
-      {loggedIn && isAdmin && (
+      {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">

@@ -70,7 +70,7 @@ const UsernameSelect: React.FC<{func:Function}> = ({func})=>{
     useEffect(()=>{
         userNamesGet();
     },[]);
-    return (<select name="img" id="img" onChange={func}  className="w-full max-w-lg">
+    return (<select name="img" id="img" onChange={(e)=>func}  className="w-full max-w-lg">
         {usernames.map((d,i)=>(
             <option key={i} value={d}>{d}</option>
         ))}

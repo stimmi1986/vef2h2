@@ -74,7 +74,7 @@ export const AddImgForm:React.FC<{}> = ()=>{
   <Form onSubmit={ImgSubmitter} className="w-full max-w-lg">
     <div className="mb-4">
     <label htmlFor="name">Veldu Nafn á mynd:</label>
-      <Input type="text" id="name" name="name" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleName}/>
+      <input type="text" id="name" name="name" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleName}/>
     </div>
     <div className="mb-4">
     <label htmlFor="url">Url Myndar:</label>
