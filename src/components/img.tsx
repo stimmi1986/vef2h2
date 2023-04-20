@@ -10,11 +10,11 @@ import { Button } from "./form/Button";
 export const NEXT_PUBLIC_JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET;
 export const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-interface img{
-  name:string;
-  url:string;
+interface img {
+  name: string;
+  url: string;
 }
-export const AddImgForm:React.FC<{}> = ()=>{
+export const AddImgForm: React.FC<{}> = () => {
   const router = useRouter();
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
@@ -31,7 +31,7 @@ export const AddImgForm:React.FC<{}> = ()=>{
       }
     }
   }, []);
-  if(!isAdmin || !loggedIn){
+  if (!isAdmin || !loggedIn) {
     return <></>
   }
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +56,7 @@ export const AddImgForm:React.FC<{}> = ()=>{
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify({name,url}),
+        body: JSON.stringify({ name, url }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -70,114 +70,114 @@ export const AddImgForm:React.FC<{}> = ()=>{
       setIsSubmitting(false);
     }
   };
-  return(
-  <Form onSubmit={ImgSubmitter} className="w-full max-w-lg">
-    <div className="mb-4">
-    <label htmlFor="name">Veldu Nafn á mynd:</label>
-      <Input type="text" id="name" name="name" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleName}/>
-    </div>
-    <div className="mb-4">
-    <label htmlFor="url">Url Myndar:</label>
-      <input type="text" id="url" name="url" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleURL}></input>
-    </div>
-    <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Hlaða inn mynd
-          </Button>
-
-  </Form>)
+  return (
+    <form onSubmit={ImgSubmitter} className="w-full max-w-lg">
+      <div className="mb-4">
+        <label htmlFor="name">Veldu Nafn á mynd:</label>
+        <input type="text" id="name" name="name" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleName} />
+      </div>
+      <div className="mb-4">
+        <label htmlFor="url">Url Myndar:</label>
+        <input type="text" id="url" name="url" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleURL}></input>
+      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Hlaða inn mynd
+      </button>
+    </form>
+  )
 }
-export const AddEventImg:React.FC<{}> =()=>{
-  return(<form>
+export const AddEventImg: React.FC<{}> = () => {
+  return (<form>
 
   </form>)
 }
-export const GetEventImgs: React.FC<{event:string}> = ({event})=>{
-  const [img,setImg] = useState<img[]>([]);
-  async function EvImgs(){
-    try{
-      const response = await fetch(`${BaseUrl}/event/${event}/img`,{
-        method:"GET"
+export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
+  const [img, setImg] = useState<img[]>([]);
+  async function EvImgs() {
+    try {
+      const response = await fetch(`${BaseUrl}/event/${event}/img`, {
+        method: "GET"
       });
       const dat = await response.json();
       setImg(dat);
-    }catch(error){
+    } catch (error) {
       console.log(error)
     }
   }
-  useEffect(() =>{
+  useEffect(() => {
     EvImgs();
-  },[]);
+  }, []);
   return (<ul className="divide-y divide-gray-300">
-    {img.map((d,i)=>(
-        <li key={i} className="py-4">
-            <ShowImg url= {d.url} name={d.name}/>
-        </li>
+    {img.map((d, i) => (
+      <li key={i} className="py-4">
+        <ShowImg url={d.url} name={d.name} />
+      </li>
     ))}
-    </ul>
+  </ul>
   )
 }
-export const ImgNameSelect:React.FC<{}> = () => {
+export const ImgNameSelect: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
-  async function AllImgs(){
-    try{
+  async function AllImgs() {
+    try {
       const response = await fetch(`${BaseUrl}/image`, {
         method: 'GET'
       });
       const dat = await response.json();
       console.log(dat);
       setImg(dat)
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     AllImgs();
-  },[]);
+  }, []);
   return (
-  <select name="img" id="img">
-    {img.map((d,i)=>(
-      <option key={i} value={d.name}>{d.name}</option>
-    ))}
-  </select>)
+    <select name="img" id="img">
+      {img.map((d, i) => (
+        <option key={i} value={d.name}>{d.name}</option>
+      ))}
+    </select>)
 }
 export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
-  async function AllImgs(){
-    try{
+  async function AllImgs() {
+    try {
       const response = await fetch(`${BaseUrl}/image`, {
         method: 'GET'
       });
       const dat = await response.json();
       console.log(dat);
       setImg(dat);
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
   }
   useEffect(() => {
     AllImgs();
-}, []);
+  }, []);
 
-return (<>
+  return (<>
 
-<ul className="divide-y divide-gray-300">
-  {img.map((d,i)=>(
-      <li key={i} className="py-4">
-        <div>
-          <p>{d.name}</p>
-          <ShowImg url= {d.url} name={d.name}/>
-        </div>
-      </li>
-  ))}
-  </ul>
+    <ul className="divide-y divide-gray-300">
+      {img.map((d, i) => (
+        <li key={i} className="py-4">
+          <div>
+            <p>{d.name}</p>
+            <ShowImg url={d.url} name={d.name} />
+          </div>
+        </li>
+      ))}
+    </ul>
   </>
-)
+  )
 
 }
-const ShowImg: React.FC<{url:string, name: string}> = ({url,name})=>{
-  return (<img src={url} alt={name}/> )
+const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
+  return (<img src={url} alt={name} />)
 }
