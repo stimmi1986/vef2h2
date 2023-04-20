@@ -39,3 +39,14 @@ export function UsernameToken(){
   }
   return username;
 }
+export function NameToken(){
+  let name ="";
+  const token = Cookies.get('signin');
+  if(token){
+    const dec: any = jwt.decode(token);
+    if(dec){
+      name = dec.name;
+    }
+  }
+  return name;
+}

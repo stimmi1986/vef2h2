@@ -4,7 +4,7 @@ import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
 import { AuthContext } from '$/pages/auth';
 import Cookies from 'js-cookie';
-import { UsernameToken } from '$/components/Verify';
+import { NameToken, UsernameToken } from '$/components/Verify';
 import { Regis, UserNameOrSelect } from '$/components/regis';
 
 interface Event {
@@ -33,7 +33,8 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   if(loggedIn){
     setUsername(UsernameToken());
-  }
+    setName(NameToken())
+  };
 
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -42,9 +43,11 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   const handleSignUpDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
+    event.preventDefault();
     setComment(event.target.value);
   };
   const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    event.preventDefault();
     setUsername(event.target.value);
   };
 
@@ -74,14 +77,6 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       setIsSubmitting(false);
     }
   };
-  useEffect(()=>{
-    async function fetchname(){
-      const response = await fetch(`${BaseUrl}/users/${username}`)
-      const data = await response.json();
-      setName(name);
-    }
-    fetchname();
-  },[])
   useEffect(() => {
     async function fetchRegistrations() {
       const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
@@ -95,6 +90,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
+  const usernameOrSel = UserNameOrSelect(isAdmin,()=>handleUsername);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -102,7 +98,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       <p className="text-lg mb-6">{event.description}</p>
       <GetEventImgs event = {event.slug}/>
       {loggedIn && (
-        <form onSubmit={handleSubmit} className="w-full max-w-lg">
+        <form onSubmit={()=>handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
               Nafn
@@ -111,7 +107,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               type="text"
               id="name"
               value={name}
-              onChange={handleSignUpName}
+              onChange={()=>handleSignUpName}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -125,7 +121,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
             <textarea
               id="comment"
               value={comment}
-              onChange={handleSignUpDescription}
+              onChange={()=>handleSignUpDescription}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
           </div>
@@ -136,7 +132,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               >
                 Username
               </label>
-            <UserNameOrSelect func={handleUsername} isAdmin={isAdmin}/>
+            {usernameOrSel}
           </div>
           <button
             type="submit"
