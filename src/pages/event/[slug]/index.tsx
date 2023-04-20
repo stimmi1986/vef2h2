@@ -81,9 +81,7 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
         },
         body: JSON.stringify({ name, username, comment, token }),
       });
-      if(res.status==405){
-        
-      }else{
+      if(res.ok){
       const data = await res.json();
       console.log(data);
       setRegistrations([...registrations, data]);}
