@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
+import { UsernameToken } from '$/components/Verify';
+import { UserNameOrSelect } from '$/components/regis';
 
 interface Event {
   id: number;
@@ -19,13 +21,14 @@ interface Event {
 function SignUp({ slug, event }: { event: Event, slug: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const [name,setName] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
 
 
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+    setName(event.target.value);
   };
 
   const handleSignUpDescription = (
@@ -33,12 +36,17 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   ) => {
     setDescription(event.target.value);
   };
+  const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
+    setUsername(event.target.value);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
     ) => {
     event.preventDefault();
     setIsSubmitting(true);
-
+    if(username==""){
+      setUsername(UsernameToken());
+    }
     try {
       const token = Cookies.get("signin");
       console.log('token:1', token)
@@ -48,7 +56,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
           Authorization: `${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, description, token }),
+        body: JSON.stringify({ name,username, description, token }),
       });
       const data = await res.json();
       console.log(data);
@@ -69,7 +77,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
       <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
       <GetEventImgs event = {event.slug}/>
-      {loggedIn && isAdmin && (
+      {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
@@ -78,7 +86,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
             <input
               type="text"
               id="name"
-              value={username}
+              value={name}
               onChange={handleSignUpName}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
@@ -96,6 +104,15 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               onChange={handleSignUpDescription}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 font-bold mb-2"
+              >
+                Username
+              </label>
+            <UserNameOrSelect func={handleUsername} isAdmin={isAdmin}/>
           </div>
           <button
             type="submit"

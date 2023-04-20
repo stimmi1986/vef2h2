@@ -41,7 +41,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       if (dec) {
         console.log(dec);
         setLoggedIn(true);
-        setIsAdmin(true);
+        setIsAdmin(dec.admin);
       }
     }
   }, [router]);

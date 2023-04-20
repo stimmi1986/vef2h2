@@ -56,7 +56,7 @@ export const Events: React.FC<{ title: string }> = ({
       if (dec) {
         console.log(dec);
         setLoggedIn(true);
-        setIsAdmin(true);
+        setIsAdmin(dec.admin);
       }
     }
   }, [isAdmin, loggedIn, setIsAdmin, setLoggedIn]);

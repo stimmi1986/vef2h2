@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { BaseUrl } from "./Layout";
+import Cookies from 'js-cookie';
+import { UsernameToken } from "./Verify";
 
 interface Regi {
     id: number;
@@ -25,6 +28,7 @@ export const Regis: React.FC<{ slug: string }> = ({
     
         const dat = await response.json();
         setRegis(dat);
+        console.log(dat);
         }catch(error) {
             console.error(error);
         }
@@ -43,4 +47,39 @@ export const Regis: React.FC<{ slug: string }> = ({
       ))}
       </ul>
     )
+}
+const UsernameSelect: React.FC<{func:Function}> = ({func})=>{
+    const [usernames, setUsernames] = useState<string[]>([]);
+    async function userNamesGet(){
+        try{
+            const token = Cookies.get('signin');
+            const response = await fetch(`${BaseUrl}/usernames`,{
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+                body:JSON.stringify({token})
+            })
+            if(response.ok){
+                setUsernames(await response.json());
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+    useEffect(()=>{
+        userNamesGet();
+    },[]);
+    return (<select name="img" id="img" onChange={func}  className="w-full max-w-lg">
+        {usernames.map((d,i)=>(
+            <option key={i} value={d}>{d}</option>
+        ))}
+    </select>);
+}
+export const UserNameOrSelect: React.FC<{isAdmin:Boolean, func:Function}> = ({isAdmin,func})=>{
+    if(isAdmin){
+        return <UsernameSelect func={func}/>
+    }
+    const username = UsernameToken();
+    return <input id="username"name="username"value={username}></input>
 }

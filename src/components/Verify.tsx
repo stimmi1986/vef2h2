@@ -28,3 +28,16 @@ export const useVerify = (): VerifyResponse => {
     isAdmin,
   };
 };
+export function UsernameToken(){ 
+  const [username, setUsername] = useState<string>("");
+  useEffect(()=>{
+    const token = Cookies.get('signin');
+    if(token){
+      const dec: any = jwt.decode(token);
+      if(dec){
+        setUsername(dec.username)
+      }
+    }
+  },[])
+  return username;
+}
