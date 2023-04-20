@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from "$/components/Layout";
+import { BaseUrl } from "$/components/Layout";
 import { GetEventImgs } from "$/components/img";
 import { useRouter } from "next/router";
-import Link from 'next/link';
 import { AuthContext } from '$/pages/auth';
-import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 import { UsernameToken } from '$/components/Verify';
 import { Regis, UserNameOrSelect } from '$/components/regis';
@@ -18,13 +16,19 @@ interface Event {
   updated: string;
 }
 
+interface Registration {
+  id: number;
+  username: string;
+  comment: string;
+}
+
 function SignUp({ slug, event }: { event: Event, slug: string }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
-  const [name,setName] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAdmin, loggedIn, setLoggedIn, setIsAdmin } = useContext(AuthContext);
+  const { isAdmin, loggedIn } = useContext(AuthContext);
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
 
 
   const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +45,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
-    ) => {
+  ) => {
     event.preventDefault();
     setIsSubmitting(true);
     if(username==""){
@@ -56,11 +60,13 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
           Authorization: `${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name,username, description, token }),
+        body: JSON.stringify({ username, description, token }),
       });
       const data = await res.json();
       console.log(data);
-
+      setRegistrations([...registrations, data]);
+      setUsername("");
+      setDescription("");
       setIsSubmitting(false);
     } catch (error) {
       console.error(error);
@@ -68,21 +74,30 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
     }
   };
 
+  useEffect(() => {
+    async function fetchRegistrations() {
+      const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+      const data = await response.json();
+      setRegistrations(data);
+    }
+    fetchRegistrations();
+  }, []);
+
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">{event.name}</h1>
+    <div className="flex flex-col items-center w-full">
+      <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
       <GetEventImgs event = {event.slug}/>
-      <Regis slug = {slug}/>
-      {loggedIn && (
+      {loggedIn && isAdmin && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
-              Name
+              Nafn
             </label>
             <input
               type="text"
@@ -97,11 +112,11 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
               htmlFor="description"
               className="block text-gray-700 font-bold mb-2"
             >
-              Description
+              Comment
             </label>
             <textarea
-              id="description"
-              value={description}
+              id="comment"
+              value={comment}
               onChange={handleSignUpDescription}
               className="w-full border border-gray-400 p-2 rounded-md"
             />
@@ -120,7 +135,7 @@ function SignUp({ slug, event }: { event: Event, slug: string }) {
             disabled={isSubmitting}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Save Changes
+            Skrá sig á atburð
           </button>
         </form>
       )}

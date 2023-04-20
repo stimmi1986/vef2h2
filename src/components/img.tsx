@@ -70,24 +70,25 @@ export const AddImgForm:React.FC<{}> = ()=>{
       setIsSubmitting(false);
     }
   };
-  return(<form onSubmit={ImgSubmitter} className="w-full max-w-lg">
+  return(
+  <Form onSubmit={ImgSubmitter} className="w-full max-w-lg">
     <div className="mb-4">
     <label htmlFor="name">Veldu Nafn á mynd:</label>
-      <input type="text" id="name" name="name" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleName}></input>
+      <Input type="text" id="name" name="name" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleName}/>
     </div>
     <div className="mb-4">
     <label htmlFor="url">Url Myndar:</label>
       <input type="text" id="url" name="url" className="w-full border border-gray-400 p-2 rounded-md" onChange={handleURL}></input>
     </div>
-    <button
+    <Button
             type="submit"
             disabled={isSubmitting}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Hlaða inn mynd
-          </button>
+          </Button>
 
-  </form>)
+  </Form>)
 }
 export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
   const router = useRouter();
