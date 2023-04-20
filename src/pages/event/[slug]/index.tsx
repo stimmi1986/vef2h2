@@ -18,6 +18,7 @@ interface Event {
 
 interface Registration {
   id: number;
+  name: string;
   username: string;
   comment: string;
 }
@@ -46,6 +47,9 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
     event.preventDefault();
     setUsername(event.target.value);
   };
+  const handleDelete = async (user:string)=>{
+
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -58,14 +62,18 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
       const res = await fetch(`${BaseUrl}/event/${slug}`, {
         method: "POST",
         headers: {
+          Authorization:`Bearer: ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, username, comment, token }),
       });
+      if(res.status==405){
+        
+      }else{
       console.log(res);
       const data = await res.json();
       console.log(data);
-      setRegistrations([...registrations, data]);
+      setRegistrations([...registrations, data]);}
       setUsername("");
       setComment("");
       setIsSubmitting(false);
@@ -92,6 +100,7 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
+      <Regis regis={registrations}/>
       <GetEventImgs event = {event.slug}/>
       {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
