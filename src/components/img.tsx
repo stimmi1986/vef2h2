@@ -117,54 +117,58 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
     setName(event.target.value);
   };
 
-  const ImgSubmitter = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
+  const ImgSubmitter = async (name: string) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${BaseUrl}/image/${slug}`, {
+      const res = await fetch(`${BaseUrl}/event/${slug}/img`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({name}),
       });
       const data = await res.json();
       if (res.ok) {
+        console.log(data);
+        setLoggedIn(true);
+        setIsAdmin(true);
       }
-      console.log(data);
-      setLoggedIn(true);
-      setIsAdmin(true);
     } catch (error) {
       console.error(error);
     } finally {
       setIsSubmitting(false);
     }
-    useEffect(() => {
-    }, []);
   };
 
-  return (<form className="w-full max-w-lg">
-    <ImgNameSelect func={handleName} />
-    <button
-      type="submit"
-      disabled={isSubmitting}
-      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      tengja mynd við viðburð
-    </button>
-  </form>)
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    ImgSubmitter(name);
+  };
+
+  return (
+    <form className="w-full max-w-lg" onSubmit={handleSubmit}>
+      <ImgNameSelect func={handleName} />
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        tengja mynd við viðburð
+      </button>
+    </form>
+  );
 }
 
-export const GetEventImgs: React.FC<{ event: string, name: string, url: string }> = ({ event }) => {
+
+export const GetEventImgs: React.FC<{ slug:string}> = ({ slug }) => {
   const [img, setImg] = useState<img[]>([]);
   async function EvImgs() {
     try {
-      const response = await fetch(`${BaseUrl}/event/${event}/img`, {
+      const response = await fetch(`${BaseUrl}/event/${slug}/img`, {
         method: "GET"
       });
       const dat = await response.json();
+      console.log(dat);
       setImg(dat);
     } catch (error) {
       console.log(error)
@@ -175,7 +179,7 @@ export const GetEventImgs: React.FC<{ event: string, name: string, url: string }
     EvImgs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  console.log(img);
   return (<ul className="divide-y divide-gray-300">
     {img.length > 0 && img.map((d, i) => (
       <li key={i} className="py-4">

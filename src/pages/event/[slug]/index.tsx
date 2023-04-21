@@ -32,6 +32,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations]= useState<Registration[]>(regis);
+  const [userRegistered, setUserRegistered] = useState(false);
 
   useEffect(()=>{
     async function getRegi(){
@@ -46,7 +47,8 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
       if(res.ok){
         const dat: any = await res.json()
         setName(dat.name);
-        setComment(dat.comment);
+        setComment(dat.comment?dat.comment:"");
+        setUserRegistered(true);
       }
     }
     getRegi();
@@ -65,6 +67,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
   const handleUsername = (event:React.ChangeEvent<HTMLSelectElement>)=>{
     event.preventDefault();
     setUsername(event.target.value);
+
   };
   const handleDelete = async (event:React.MouseEvent<HTMLButtonElement>)=>{
     const user = (event.target as HTMLButtonElement).value;
@@ -142,8 +145,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      <GetEventImgs name={name} url={event.slug} event={''} />
-      <ShowImg name={name} url={url}/>
+      <GetEventImgs slug={slug}/>
       <Regis regis={registrations} user={username} admin={isAdmin} func={handleDelete}/>
       {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
@@ -189,6 +191,15 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
           >
             Skrá sig á atburð
           </button>
+          {(isAdmin || userRegistered) && (
+            <button
+              type="button"
+              onClick={(handleDelete)}
+              value = {username}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Eyða skráningu
+              </button>
+          )}
         </form>
       )}
     </div>
