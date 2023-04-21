@@ -92,7 +92,7 @@ export const AddImgForm: React.FC<{}> = () => {
   )
 }
 
-export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
+export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
   const router = useRouter();
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -108,16 +108,14 @@ export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
       }
     }
   }, []);
-  if(!isAdmin || !loggedIn){
+  if (!isAdmin || !loggedIn) {
     return <></>
   }
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const ImgSubmitter = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const ImgSubmitter = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
     try {
@@ -126,10 +124,11 @@ export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify({name}),
+        body: JSON.stringify({ name }),
       });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data === "ok") {
+        window.location.reload();
       }
       console.log(data);
       setLoggedIn(true);
@@ -141,16 +140,18 @@ export const AddEventImg:React.FC<{slug:string}> =({slug})=>{
     }
   };
 
-  return(<form  className="w-full max-w-lg">
-    <ImgNameSelect func={handleName}/>
-    <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            tengja mynd við viðburð
-          </button>
-  </form>)
+  return (
+    <form className="w-full max-w-lg">
+      <ImgNameSelect func={handleName} />
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        tengja mynd við viðburð
+      </button>
+    </form>
+  );
 }
 
 export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
@@ -181,7 +182,7 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
   )
 }
 
-export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
+export const ImgNameSelect: React.FC<{ func: Function }> = ({ func }) => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
     try {
@@ -201,11 +202,11 @@ export const ImgNameSelect:React.FC<{func:Function}> = ({func}) => {
   }, []);
 
   return (
-  <select name="img" id="img" onChange={func}  className="w-full max-w-lg">
-    {img.map((d,i)=>(
-      <option key={i} value={d.name}>{d.name}</option>
-    ))}
-  </select>)
+    <select name="img" id="img" onChange={func} className="w-full max-w-lg">
+      {img.map((d, i) => (
+        <option key={i} value={d.name}>{d.name}</option>
+      ))}
+    </select>)
 }
 
 export const GetAllImgs: React.FC<{}> = () => {
@@ -223,27 +224,73 @@ export const GetAllImgs: React.FC<{}> = () => {
     }
   }
 
+
+
+  const handleAllImgsDelete = async (slug: string) => {
+    const token = Cookies.get('signin');
+    const response = await fetch(`${BaseUrl}/image/${slug}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({slug, token})
+    });
+    console.log(response);
+    if (response.ok) {
+      AllImgs();
+    }
+  };
+
   useEffect(() => {
     AllImgs();
   }, []);
 
-  return (<>
+  return (
+    <>
+      <ul className="img-grid">
+        {img.map((d, i) => (
+          <li key={i} className="img-grid-item flex justify-center items-center">
+            <div>
+              <p>{d.name}</p>
+              <ShowImg url={d.url} name={d.name} />
+              <button
+              className='text-2ml ml-4 mr-4 hover:text-red-500'
+              onClick={() => handleAllImgsDelete(d.name)}
+              >
+              delete?
+            </button>
+            </div>
+          </li>
+        ))}
+      </ul>
 
-    <ul className="divide-y divide-gray-300">
-      {img.map((d, i) => (
-        <li key={i} className="py-4">
-          <div>
-            <p>{d.name}</p>
-            <ShowImg url={d.url} name={d.name} />
-          </div>
-        </li>
-      ))}
-    </ul>
-  </>
-  )
+      <style>{`
+        .img-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-gap: 20px;
+        }
+
+        .img-grid-item {
+          list - style: none;
+          text-align: center;
+        }
+
+        .img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+      `}</style>
+    </>
+  );
+
 
 }
 
-const ShowImg: React.FC<{url:string, name: string}> = ({url,name})=>{
-  return (<img src={url} alt={name} width="400"/> )
+const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
+  return (
+    <img src={url} alt={name} width={'120px'} height={'120px'} />
+  )
 }
