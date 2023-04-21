@@ -32,16 +32,34 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations]= useState<Registration[]>(regis);
-  const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    setName(event.target.value);
-  };
-
+  
+  useEffect(()=>{
+    async function getRegi(){
+      const token = Cookies.get('signin');
+      const res = await fetch(`${BaseUrl}/event/${slug}/regis/${username}`,{
+        method:"GET",
+        headers:{
+          Authorization: `Bearer: ${token}`,
+          "content-Type":"application/json",
+        },
+      })
+      if(res.ok){
+        const dat: any = await res.json()
+        setName(dat.name);
+        setComment(dat.comment);
+      }
+    }
+    getRegi();
+  },[]);
   const handleSignUpDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     event.preventDefault();
     setComment(event.target.value);
+  };
+  const handleSignUpName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    setName(event.target.value);
   };
   const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
     event.preventDefault();
@@ -85,8 +103,20 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
       const data = await res.json();
       console.log(data);
       setRegistrations([...registrations, data]);}
-      setUsername("");
-      setComment("");
+      else{
+        const resp = await fetch(`${BaseUrl}/event/${slug}/regis/${username}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization:`Bearer: ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, username, comment, token }),
+        })
+        if(resp.ok){
+          setRegistrations(await getRegistrations(slug));
+        }
+      }
       setIsSubmitting(false);
     } catch (error) {
       console.error(error);
@@ -162,6 +192,11 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
     </div>
   );
 }
+export async function getRegistrations(slug:string){
+  const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
+  const regis = await response.json();
+  return regis;
+}
 
 interface Context {
   query: {
@@ -177,6 +212,7 @@ export async function getServerSideProps(context: Context) {
   const event = await res.json();
   const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
   const regis = await response.json();
+
 
   return {
     props: {
