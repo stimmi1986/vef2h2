@@ -22,8 +22,8 @@ export const Regis: React.FC<{ regis: Registration[], user: string, admin: boole
     {regis.map((d, i) => (
       <li key={i} className="py-4">
         <p>{d.name}</p>
+        {admin && <p>{d.username}</p>}
         <p>{d.comment}</p>
-        <DelButton user={user} username={d.username} admin={admin} func={func} />
       </li>
     ))}
   </ul>

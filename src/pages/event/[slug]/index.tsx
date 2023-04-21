@@ -32,6 +32,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations]= useState<Registration[]>(regis);
+  const [userRegistered, setUserRegistered] = useState(false);
   
   useEffect(()=>{
     async function getRegi(){
@@ -47,6 +48,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
         const dat: any = await res.json()
         setName(dat.name);
         setComment(dat.comment?dat.comment:"");
+        setUserRegistered(true);
       }
     }
     getRegi();
@@ -187,6 +189,15 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
           >
             Skrá sig á atburð
           </button>
+          {userRegistered && (
+            <button
+              type="button"
+              onClick={(handleDelete)}
+              value = {username}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Eyða skráningu
+              </button>
+          )}
         </form>
       )}
     </div>
