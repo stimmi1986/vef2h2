@@ -8,11 +8,16 @@ import { Button } from "$/components/form/Button";
 
 export const DelButton: React.FC<{ user: string, username: string, admin: boolean, func: MouseEventHandler<HTMLButtonElement> }> = ({
   user, username, admin, func }) => {
-  if (admin || username == user) {
-    return (<button onClick={func} value={username} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"> Eyða </button>)
+  if (admin || username === user) {
+    return (
+      <button onClick={func} value={user} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Eyða
+      </button>
+    )
   }
   return null;
 }
+
 
 export const Regis: React.FC<{ regis: Registration[], user: string, admin: boolean, func: MouseEventHandler<HTMLButtonElement> }> = ({
   regis, user, admin, func,
@@ -64,5 +69,6 @@ export function UserNameOrSelect(Admin: boolean, func: ChangeEventHandler<HTMLSe
     return <UsernameSelect func={func} />
   }
   const username = UsernameToken();
-  return <input id="username" name="username" value={username} readOnly ></input>
+  return <input id="username" name="username" value={username} readOnly />
 }
+

@@ -1,7 +1,7 @@
 import { AuthContext } from "$/pages/auth";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, useContext, useEffect, useState } from "react";
 import { Form } from "react-router-dom";
 import jwt from 'jsonwebtoken';
 import { Input } from "./form/Input";
@@ -30,6 +30,7 @@ export const AddImgForm: React.FC<{}> = () => {
         setIsAdmin(dec.admin);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (!isAdmin || !loggedIn) {
     return <></>
@@ -105,6 +106,7 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
         setIsAdmin(dec.admin);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isAdmin || !loggedIn) {
@@ -155,7 +157,7 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
   </form>)
 }
 
-export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ event }) => {
+export const GetEventImgs: React.FC<{ event: string, name: string, url: string }> = ({ event }) => {
   const [img, setImg] = useState<img[]>([]);
   async function EvImgs() {
     try {
@@ -171,10 +173,11 @@ export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ even
 
   useEffect(() => {
     EvImgs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (<ul className="divide-y divide-gray-300">
-    {img.map((d, i) => (
+    {img.length > 0 && img.map((d, i) => (
       <li key={i} className="py-4">
         <ShowImg url={d.url} name={d.name} />
       </li>
@@ -184,10 +187,10 @@ export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ even
 };
 
 type ImgNameSelectProps = {
-  func: (event: ChangeEvent<HTMLSelectElement>) => void;
+  func: (event: ChangeEvent<HTMLButtonElement>) => void;
 }
 
-export const ImgNameSelect: React.FC<ImgNameSelectProps> = ({ func }) => {
+export const ImgNameSelect: React.FC<{ func: ChangeEventHandler<HTMLSelectElement> }> = ({  func }) => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
     try {
@@ -211,8 +214,9 @@ export const ImgNameSelect: React.FC<ImgNameSelectProps> = ({ func }) => {
       {img.map((d, i) => (
         <option key={i} value={d.name}>{d.name}</option>
       ))}
-    </select>)
-}
+    </select>
+  );
+};
 
 export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
@@ -238,7 +242,7 @@ export const GetAllImgs: React.FC<{}> = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({slug, token})
+      body: JSON.stringify({ slug, token })
     });
     console.log(response);
     if (response.ok) {
@@ -259,11 +263,11 @@ export const GetAllImgs: React.FC<{}> = () => {
               <p>{d.name}</p>
               <ShowImg url={d.url} name={d.name} />
               <button
-              className='text-2ml ml-4 mr-4 hover:text-red-500'
-              onClick={() => handleAllImgsDelete(d.name)}
+                className='text-2ml ml-4 mr-4 hover:text-red-500'
+                onClick={() => handleAllImgsDelete(d.name)}
               >
-              delete?
-            </button>
+                delete?
+              </button>
             </div>
           </li>
         ))}
@@ -296,6 +300,7 @@ export const GetAllImgs: React.FC<{}> = () => {
 
 export const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img src={url} alt={name} width={'120px'} height={'120px'} />
   )
 }

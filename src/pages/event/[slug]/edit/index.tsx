@@ -33,6 +33,7 @@ function Edit({ event, slug }: { event: Event, slug: string }) {
         setIsAdmin(dec.admin);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleUpdateName = (event: React.ChangeEvent<HTMLInputElement>) => {

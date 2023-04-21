@@ -32,7 +32,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin, loggedIn } = useContext(AuthContext);
   const [registrations, setRegistrations]= useState<Registration[]>(regis);
-  
+
   useEffect(()=>{
     async function getRegi(){
       const token = Cookies.get('signin');
@@ -50,6 +50,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
       }
     }
     getRegi();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
   const handleSignUpDescription = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -61,12 +62,12 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
     event.preventDefault();
     setName(event.target.value);
   };
-  const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
+  const handleUsername = (event:React.ChangeEvent<HTMLSelectElement>)=>{
     event.preventDefault();
     setUsername(event.target.value);
   };
   const handleDelete = async (event:React.MouseEvent<HTMLButtonElement>)=>{
-    const user = event.target.value;
+    const user = (event.target as HTMLButtonElement).value;
     console.log("delete")
     const token = Cookies.get("signin");
     const res = await fetch(`${BaseUrl}/event/${slug}/regis/${user}`,{
@@ -80,8 +81,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
     const response = await fetch(`${BaseUrl}/event/${slug}/regis`);
     const regis = await response.json();
     setRegistrations(regis);
-
-  }
+}
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -130,19 +130,20 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
     setRegistrations(regis);
     }
     getRegis();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
-  const usernameOrSel = UserNameOrSelect(isAdmin,handleUsername);
+  const usernameOrSel = UserNameOrSelect(isAdmin, handleUsername);
 
   return (
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      <GetEventImgs name={name} url={slug} id={event.id} />
-      <ShowImg name={name} url={event.slug}/>
+      <GetEventImgs name={name} url={event.slug} event={''} />
+      <ShowImg name={name} url={url}/>
       <Regis regis={registrations} user={username} admin={isAdmin} func={handleDelete}/>
       {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
