@@ -2,7 +2,6 @@ import React from 'react'
 import { ShowImg } from '$/components/img'
 import { BaseUrl } from '$/components/Layout'
 
-
 interface Event {
   id: number;
   name: string;
@@ -12,10 +11,9 @@ interface Event {
   updated: string;
 }
 
-export function eventImg({ url, event, name, slug  }: {event: Event, url: string, name: string, slug: string}) {
+export default function EventImg({ url, event, name, slug  }: {event: Event, url: string, name: string, slug: string}) {
   return (
     <ShowImg url={event.slug} name={name}/>
-
   )
 }
 
