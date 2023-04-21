@@ -111,7 +111,7 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
     return <></>
   }
 
-  const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleName = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setName(event.target.value);
   };
 
