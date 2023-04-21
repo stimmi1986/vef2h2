@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BaseUrl } from "$/components/Layout";
-import { GetEventImgs } from "$/components/img";
+import { GetEventImgs, ShowImg } from "$/components/img";
 import { useRouter } from "next/router";
 import { AuthContext } from '$/pages/auth';
 import Cookies from 'js-cookie';
 import { NameToken, UsernameToken } from '$/components/Verify';
-import { Regis, UserNameOrSelect,DelButton } from '$/components/regis';
+import { Regis, UserNameOrSelect, DelButton } from '$/components/regis';
 
 interface Event {
   id: number;
@@ -24,7 +24,7 @@ export interface Registration {
 }
 
 
-function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Registration[],uname:string,nafn:string}) {
+function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis: Registration[], uname: string, nafn: string, url: string}) {
   const router = useRouter();
   const [username, setUsername] = useState(UsernameToken);
   const [name, setName] = useState(NameToken());
@@ -101,7 +101,7 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
     }
     getRegis();
   },[]);
-  
+
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
@@ -111,8 +111,9 @@ function SignUp({ slug, event, regis}: { event: Event, slug: string,  regis:Regi
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
+      <GetEventImgs name={name} url={slug} id={event.id} />
+      <ShowImg name={name} url={event.slug}/>
       <Regis regis={registrations} user={username} admin={isAdmin} func={handleDelete}/>
-      <GetEventImgs event = {event.slug}/>
       {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="mb-4">

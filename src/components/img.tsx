@@ -115,7 +115,9 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
     setName(event.target.value);
   };
 
-  const ImgSubmitter = async (event: React.FormEvent<HTMLFormElement>) => {
+  const ImgSubmitter = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
     setIsSubmitting(true);
     try {
@@ -127,8 +129,7 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
         body: JSON.stringify({ name }),
       });
       const data = await res.json();
-      if (res.ok && data === "ok") {
-        window.location.reload();
+      if (res.ok) {
       }
       console.log(data);
       setLoggedIn(true);
@@ -138,23 +139,23 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
     } finally {
       setIsSubmitting(false);
     }
+    useEffect(() => {
+    }, []);
   };
 
-  return (
-    <form className="w-full max-w-lg">
-      <ImgNameSelect func={handleName} />
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        tengja mynd við viðburð
-      </button>
-    </form>
-  );
+  return (<form className="w-full max-w-lg">
+    <ImgNameSelect func={handleName} />
+    <button
+      type="submit"
+      disabled={isSubmitting}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      tengja mynd við viðburð
+    </button>
+  </form>)
 }
 
-export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
+export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ event }) => {
   const [img, setImg] = useState<img[]>([]);
   async function EvImgs() {
     try {
@@ -180,7 +181,7 @@ export const GetEventImgs: React.FC<{ event: string }> = ({ event }) => {
     ))}
   </ul>
   )
-}
+};
 
 export const ImgNameSelect: React.FC<{ func: Function }> = ({ func }) => {
   const [img, setImg] = useState<img[]>([]);
@@ -289,7 +290,7 @@ export const GetAllImgs: React.FC<{}> = () => {
 
 }
 
-const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
+export const ShowImg: React.FC<{ url: string, name: string }> = ({ url, name }) => {
   return (
     <img src={url} alt={name} width={'120px'} height={'120px'} />
   )
