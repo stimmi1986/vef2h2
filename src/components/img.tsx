@@ -1,7 +1,7 @@
 import { AuthContext } from "$/pages/auth";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Form } from "react-router-dom";
 import jwt from 'jsonwebtoken';
 import { Input } from "./form/Input";
@@ -38,9 +38,7 @@ export const AddImgForm: React.FC<{}> = () => {
     setName(event.target.value);
   };
 
-  const handleURL = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handleURL = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
   };
 
@@ -108,9 +106,11 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
       }
     }
   }, []);
+
   if (!isAdmin || !loggedIn) {
     return <></>
   }
+
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -183,7 +183,11 @@ export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ even
   )
 };
 
-export const ImgNameSelect: React.FC<{ func: Function }> = ({ func }) => {
+type ImgNameSelectProps = {
+  func: (event: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+export const ImgNameSelect: React.FC<ImgNameSelectProps> = ({ func }) => {
   const [img, setImg] = useState<img[]>([]);
   async function AllImgs() {
     try {

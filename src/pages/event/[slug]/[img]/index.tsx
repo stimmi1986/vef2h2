@@ -1,8 +1,6 @@
 import React from 'react'
 import { ShowImg } from '$/components/img'
 import { BaseUrl } from '$/components/Layout'
-import { AuthContext } from '$/pages/auth';
-
 
 
 interface Event {
