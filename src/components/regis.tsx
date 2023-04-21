@@ -12,7 +12,7 @@ export const DelButton: React.FC<{user:string,username:string,admin:boolean,func
     if(admin||username==user){
         return (<button onClick={func} value={username} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"> Eyða </button>)
     }
-    return <></>
+    return ;
 }
 export const Regis: React.FC<{ regis: Registration[] , user:string, admin:boolean, func:Function}> = ({
     regis,user,admin, func,
@@ -62,5 +62,5 @@ export function UserNameOrSelect(Admin:boolean,func:Function){
         return <UsernameSelect func={func}/>
     }
     const username = UsernameToken();
-    return <input id="username"name="username"value={username}></input>
+    return <input id="username"name="username"value={username} readOnly ></input>
 }
