@@ -66,6 +66,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
   const handleUsername = (event:React.ChangeEvent<HTMLInputElement>)=>{
     event.preventDefault();
     setUsername(event.target.value);
+    
   };
   const handleDelete = async (event:React.MouseEvent<HTMLButtonElement>)=>{
     const user = event.target.value;
@@ -189,7 +190,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
           >
             Skrá sig á atburð
           </button>
-          {userRegistered && (
+          {(isAdmin || userRegistered) && (
             <button
               type="button"
               onClick={(handleDelete)}
