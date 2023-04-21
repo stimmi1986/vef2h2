@@ -224,6 +224,7 @@ export const ImgNameSelect: React.FC<{ func: ChangeEventHandler<HTMLSelectElemen
 
 export const GetAllImgs: React.FC<{}> = () => {
   const [img, setImg] = useState<img[]>([]);
+  const { isAdmin, loggedIn } = useContext(AuthContext);
   async function AllImgs() {
     try {
       const response = await fetch(`${BaseUrl}/image`, {
@@ -267,8 +268,9 @@ export const GetAllImgs: React.FC<{}> = () => {
               <p>{d.name}</p>
               <ShowImg url={d.url} name={d.name} />
               <button
-                className='text-2ml ml-4 mr-4 hover:text-red-500'
-                onClick={() => handleAllImgsDelete(d.name)}
+              className='text-2ml ml-4 mr-4 hover:text-red-500'
+              onClick={() => handleAllImgsDelete(d.name)}
+              disabled={!isAdmin}
               >
                 delete?
               </button>

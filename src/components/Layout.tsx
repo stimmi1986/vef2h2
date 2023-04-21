@@ -52,9 +52,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <h1 className="text-lg font-bold mr-8">Viðburðasíða fyrir Vefforritun 2</h1>
         </div>
         <div className="flex items-center">
-          <Link href='/AllImgs'>
+        <Link href='/AllImgs'>
             <button className="text-blue-400 font-bold hover:text-blue-300 mr-8">Sjá Allar Myndir</button>
-          </Link>
+        </Link>
         {isAdmin && (
           <Link href="/makeCourse">
             <button className="text-blue-400 font-bold hover:text-blue-300 mr-8">Búa til viðburð?</button>
