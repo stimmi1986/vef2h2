@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { BaseUrl, NEXT_PUBLIC_JWT_SECRET } from '$/components/Layout';
 import { useRouter } from 'next/router';
-import { AuthContext } from './auth';
+import { AuthContext } from '../components/auth';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 

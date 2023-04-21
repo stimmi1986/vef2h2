@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app'
-import { AuthProvider } from './auth';
+import { AuthProvider } from '$/components/auth';
 import Layout from '$/components/Layout'
 
 import '../styles/globals.css'

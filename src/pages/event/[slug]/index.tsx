@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { BaseUrl } from "$/components/Layout";
 import { GetEventImgs, ShowImg } from "$/components/img";
 import { useRouter } from "next/router";
-import { AuthContext } from '$/pages/auth';
+import { AuthContext } from '$/components/auth';
 import Cookies from 'js-cookie';
 import { NameToken, UsernameToken } from '$/components/Verify';
 import { Regis, UserNameOrSelect, DelButton } from '$/components/regis';
