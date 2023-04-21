@@ -155,11 +155,11 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
   </form>)
 }
 
-export const GetEventImgs: React.FC<{ slug:string }> = ({ event }) => {
+export const GetEventImgs: React.FC<{ slug:string }> = ({ slug }) => {
   const [img, setImg] = useState<img[]>([]);
   async function EvImgs() {
     try {
-      const response = await fetch(`${BaseUrl}/event/${event}/img`, {
+      const response = await fetch(`${BaseUrl}/event/${slug}/img`, {
         method: "GET"
       });
       const dat = await response.json();
