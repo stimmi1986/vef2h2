@@ -46,7 +46,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
       if(res.ok){
         const dat: any = await res.json()
         setName(dat.name);
-        setComment(dat.comment);
+        setComment(dat.comment?dat.comment:"");
       }
     }
     getRegi();
@@ -141,8 +141,7 @@ function SignUp({ slug, event, url, regis}: { event: Event, slug: string,  regis
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-2">{event.name}</h1>
       <p className="text-lg mb-6">{event.description}</p>
-      <GetEventImgs name={name} url={slug} id={event.id} />
-      <ShowImg name={name} url={event.slug}/>
+      <GetEventImgs slug={slug}/>
       <Regis regis={registrations} user={username} admin={isAdmin} func={handleDelete}/>
       {loggedIn && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg">

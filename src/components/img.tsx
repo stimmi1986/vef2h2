@@ -119,14 +119,16 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+    setName(event.target.img.value);
+    
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${BaseUrl}/image/${slug}`, {
+      const res = await fetch(`${BaseUrl}/event/${slug}/img`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({name}),
       });
       const data = await res.json();
       if (res.ok) {
@@ -139,11 +141,9 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
     } finally {
       setIsSubmitting(false);
     }
-    useEffect(() => {
-    }, []);
   };
 
-  return (<form className="w-full max-w-lg">
+  return (<form className="w-full max-w-lg" onSubmit={ImgSubmitter}>
     <ImgNameSelect func={handleName} />
     <button
       type="submit"
@@ -155,7 +155,7 @@ export const AddEventImg: React.FC<{ slug: string }> = ({ slug }) => {
   </form>)
 }
 
-export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ event }) => {
+export const GetEventImgs: React.FC<{ slug:string }> = ({ event }) => {
   const [img, setImg] = useState<img[]>([]);
   async function EvImgs() {
     try {
@@ -163,6 +163,7 @@ export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ even
         method: "GET"
       });
       const dat = await response.json();
+      console.log(dat);
       setImg(dat);
     } catch (error) {
       console.log(error)
@@ -172,7 +173,7 @@ export const GetEventImgs: React.FC<{ event: string, name: string,  }> = ({ even
   useEffect(() => {
     EvImgs();
   }, []);
-
+  console.log(img);
   return (<ul className="divide-y divide-gray-300">
     {img.map((d, i) => (
       <li key={i} className="py-4">
